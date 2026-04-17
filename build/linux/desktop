@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=My Product
+Comment=A swt application
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/swt.exe %u
+Terminal=false
+Type=Application
+Icon=swt.exe
+Categories=Utility;
+StartupWMClass=swt.exe
+
+ 
