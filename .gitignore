@@ -10,6 +10,5 @@ build/android/app/build/
 build/android/app/src/main/jniLibs/
 build/android/build/
 build/android/local.properties
-vendor/
 changeme
 changeme.exe
