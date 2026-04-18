@@ -6,9 +6,19 @@
 // @ts-ignore: Unused imports
 import { Create as $Create } from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as services$0 from "../../../../../changeme/backend/services/models.js";
+
 function configure() {
     Object.freeze(Object.assign($Create.Events, {
+        "chat:chunk": $$createType0,
+        "chat:status": $$createType1,
     }));
 }
+
+// Private type creation functions
+const $$createType0 = services$0.ChatChunkEvent.createFrom;
+const $$createType1 = services$0.MessageStatusEvent.createFrom;
 
 configure();

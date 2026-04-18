@@ -55,11 +55,17 @@ tasks:
         fi
 
         # Determine toolchain based on host OS
-        case "$(uname -s)" in
-          Darwin) HOST_TAG="darwin-x86_64" ;;
-          Linux)  HOST_TAG="linux-x86_64" ;;
-          *)      echo "Unsupported host OS"; exit 1 ;;
-        esac
+        if command -v uname >/dev/null 2>&1; then
+          OS_NAME=$(uname -s)
+          case "$OS_NAME" in
+            Darwin) HOST_TAG="darwin-x86_64" ;;
+            Linux)  HOST_TAG="linux-x86_64" ;;
+            *)      HOST_TAG="windows-x86_64" ;;
+          esac
+        else
+          # Windows (no uname command)
+          HOST_TAG="windows-x86_64"
+        fi
 
         TOOLCHAIN="$NDK_ROOT/toolchains/llvm/prebuilt/$HOST_TAG"
 
@@ -89,7 +95,7 @@ tasks:
         mkdir -p {{.BIN_DIR}}
         mkdir -p build/android/app/src/main/jniLibs/$JNI_DIR
 
-        go build -buildmode=c-shared {{.BUILD_FLAGS}} \
+        go build -mod=vendor -buildmode=c-shared {{.BUILD_FLAGS}} \
           -o build/android/app/src/main/jniLibs/$JNI_DIR/libwails.so
     vars:
       BUILD_FLAGS: '{{if eq .PRODUCTION "true"}}-tags production,android -trimpath -buildvcs=false -ldflags="-w -s"{{else}}-tags android,debug -buildvcs=false -gcflags=all="-l"{{end}}'
@@ -121,21 +127,15 @@ tasks:
 
   assemble:apk:
     summary: Assembles the APK using Gradle
+    dir: .
     cmds:
-      - |
-        cd build/android
-        ./gradlew assembleDebug
-        cp app/build/outputs/apk/debug/app-debug.apk "../../{{.BIN_DIR}}/{{.APP_NAME}}.apk"
-        echo "APK created: {{.BIN_DIR}}/{{.APP_NAME}}.apk"
+      - ./gradlew.bat assembleDebug
+      - cp app/build/outputs/apk/debug/app-debug.apk ../../bin/swt.apk
 
   assemble:apk:release:
     summary: Assembles a release APK using Gradle
     cmds:
-      - |
-        cd build/android
-        ./gradlew assembleRelease
-        cp app/build/outputs/apk/release/app-release-unsigned.apk "../../{{.BIN_DIR}}/{{.APP_NAME}}-release.apk"
-        echo "Release APK created: {{.BIN_DIR}}/{{.APP_NAME}}-release.apk"
+      - cd build/android; ./gradlew assembleRelease; cp app/build/outputs/apk/release/app-release-unsigned.apk ../../bin/swt-release.apk
 
   generate:android:bindings:
     internal: true

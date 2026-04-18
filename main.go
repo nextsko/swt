@@ -2,14 +2,14 @@ package main
 
 import (
 	"changeme/backend"
+	"changeme/backend/repository"
+	"changeme/backend/services"
 	"embed"
 	_ "embed"
 	"log"
-	"runtime"
 	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
-	"github.com/wailsapp/wails/v3/pkg/icons"
 )
 
 //go:embed all:frontend/dist
@@ -19,68 +19,42 @@ var quitSignal = make(chan bool)
 
 func init() {
 	application.RegisterEvent[string]("time")
+	application.RegisterEvent[services.ChatChunkEvent]("chat:chunk")
+	application.RegisterEvent[services.MessageStatusEvent]("chat:status")
 }
 
 func main() {
+	// 初始化数据层（Mock 实现）
+	store := repository.NewMockStore()
+
 	app := application.New(application.Options{
 		Name:        "swt",
 		Description: "A swt application",
 		Services: []application.Service{
 			application.NewService(backend.NewGreetService()),
+			application.NewService(services.NewChatService(store)),
+			application.NewService(services.NewContactService(store)),
+			application.NewService(services.NewDiscoverService(store)),
+			application.NewService(services.NewProfileService(store)),
+			application.NewService(services.NewAgentService(store, store)),
+			application.NewService(services.NewBotService(store, store, store)),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
-		Windows: application.WindowsOptions{
-			// Prevent app from quitting when last window closes
-			DisableQuitOnLastWindowClosed: true,
+		PanicHandler: func(p *application.PanicDetails) {
+			log.Printf("PANIC: %v\n%s\nFullStack:\n%s",
+				p.Error, p.StackTrace, p.FullStackTrace)
 		},
 	})
 
-	window := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:       "My Product",
-		Width:       500,
-		Height:      800,
-		Frameless:   true,
-		AlwaysOnTop: true,
-		Hidden:      true,
-		Windows: application.WindowsWindow{
-			HiddenOnTaskbar: true,
-		},
-		Mac: application.MacWindow{
-			InvisibleTitleBarHeight: 50,
-			Backdrop:                application.MacBackdropTranslucent,
-			TitleBar:                application.MacTitleBarHiddenInset,
-		},
+	app.Window.NewWithOptions(application.WebviewWindowOptions{
+		Title:            "swt",
+		Width:            1024,
+		Height:           768,
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
 	})
-
-	// System Tray Setup
-	systemTray := app.SystemTray.New()
-	if runtime.GOOS == "darwin" {
-		systemTray.SetTemplateIcon(icons.SystrayMacTemplate)
-	} else {
-		systemTray.SetDarkModeIcon(icons.SystrayDark)
-		systemTray.SetIcon(icons.SystrayLight)
-	}
-
-	// System Tray Menu
-	myMenu := app.Menu.New()
-	myMenu.Add("Show Window").OnClick(func(_ *application.Context) {
-		window.Show()
-	})
-	myMenu.Add("Hide Window").OnClick(func(_ *application.Context) {
-		window.Hide()
-	})
-	myMenu.AddSeparator()
-	myMenu.Add("Quit").OnClick(func(_ *application.Context) {
-		app.Quit()
-	})
-	systemTray.SetMenu(myMenu)
-
-	// Attach window to systray
-	systemTray.AttachWindow(window).WindowOffset(5)
 
 	// Time events goroutine
 	go func() {

@@ -5,9 +5,15 @@
 // @ts-ignore: Unused imports
 import type { Events } from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import type * as services$0 from "../../../../../changeme/backend/services/models.js";
+
 declare module "@wailsio/runtime" {
     namespace Events {
         interface CustomEvents {
+            "chat:chunk": services$0.ChatChunkEvent;
+            "chat:status": services$0.MessageStatusEvent;
             "time": string;
         }
     }

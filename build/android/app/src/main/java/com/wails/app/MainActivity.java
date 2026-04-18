@@ -96,14 +96,25 @@ public class MainActivity extends AppCompatActivity {
                         // Call bridge directly with full path
                         byte[] data = bridge.serveAsset(fullPath, request.getMethod(), "{}");
                         if (data != null && data.length > 0) {
+                            // Detect Content-Type by inspecting first byte:
+                            // JSON starts with { [ " digit - t(rue) f(alse) n(ull)
+                            // Plain text returned from Go's HTTPTransport.text()
+                            String mimeType = "text/plain";
+                            if (data.length > 0) {
+                                byte b = data[0];
+                                if (b == '{' || b == '[' || b == '"' || b == 't' || b == 'f' || b == 'n' ||
+                                    (b >= '0' && b <= '9') || b == '-') {
+                                    mimeType = "application/json";
+                                }
+                            }
                             java.io.InputStream inputStream = new java.io.ByteArrayInputStream(data);
                             java.util.Map<String, String> headers = new java.util.HashMap<>();
                             headers.put("Access-Control-Allow-Origin", "*");
                             headers.put("Cache-Control", "no-cache");
-                            headers.put("Content-Type", "application/json");
+                            headers.put("Content-Type", mimeType);
 
                             return new WebResourceResponse(
-                                "application/json",
+                                mimeType,
                                 "UTF-8",
                                 200,
                                 "OK",
@@ -133,6 +144,35 @@ public class MainActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 Log.d(TAG, "Page loaded: " + url);
+                // Inject fetch override to send POST body as query params
+                // (Android WebView cannot pass POST body to shouldInterceptRequest)
+                String fetchOverride =
+                    "(function() {" +
+                    "  if (window.__wailsFetchPatched) return;" +
+                    "  window.__wailsFetchPatched = true;" +
+                    "  const origFetch = window.fetch;" +
+                    "  window.fetch = function(input, init) {" +
+                    "    try {" +
+                    "      let urlStr = '';" +
+                    "      if (typeof input === 'string') urlStr = input;" +
+                    "      else if (input instanceof URL) urlStr = input.toString();" +
+                    "      else if (input && input.url) urlStr = input.url;" +
+                    "      console.log('[fetch-patch] url:', urlStr, 'method:', init && init.method);" +
+                    "      if (urlStr.indexOf('/wails/runtime') !== -1 && init && init.method === 'POST' && init.body) {" +
+                    "        const body = typeof init.body === 'string' ? JSON.parse(init.body) : init.body;" +
+                    "        const u = new URL(urlStr, window.location.origin);" +
+                    "        if (body.object !== undefined) u.searchParams.set('object', String(body.object));" +
+                    "        if (body.method !== undefined) u.searchParams.set('method', String(body.method));" +
+                    "        if (body.args !== undefined) u.searchParams.set('args', JSON.stringify(body.args));" +
+                    "        console.log('[fetch-patch] rewrite to:', u.toString());" +
+                    "        return origFetch(u.toString(), { method: 'POST', headers: init.headers });" +
+                    "      }" +
+                    "    } catch (e) { console.error('[fetch-patch] error:', e); }" +
+                    "    return origFetch(input, init);" +
+                    "  };" +
+                    "  console.log('[fetch-patch] installed');" +
+                    "})();";
+                webView.evaluateJavascript(fetchOverride, null);
                 // Inject Wails runtime
                 bridge.injectRuntime(webView, url);
             }

@@ -12,8 +12,18 @@
   },
   "dependencies": {
     "@wailsio/runtime": "^3.0.0-alpha.79",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.20",
+    "highlight.js": "^11.11.1",
+    "lucide-react": "^1.8.0",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.14.1",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1",
+    "tailwind-merge": "^3.5.0",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
