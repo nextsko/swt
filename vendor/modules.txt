@@ -89,6 +89,9 @@ github.com/emirpasic/gods/lists/arraylist
 github.com/emirpasic/gods/trees
 github.com/emirpasic/gods/trees/binaryheap
 github.com/emirpasic/gods/utils
+# github.com/getkin/kin-openapi v0.124.0
+## explicit; go 1.20
+github.com/getkin/kin-openapi/openapi3
 # github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376
 ## explicit; go 1.13
 github.com/go-git/gcfg
@@ -161,6 +164,12 @@ github.com/go-logr/stdr
 # github.com/go-ole/go-ole v1.3.0
 ## explicit; go 1.12
 github.com/go-ole/go-ole
+# github.com/go-openapi/jsonpointer v0.20.2
+## explicit; go 1.19
+github.com/go-openapi/jsonpointer
+# github.com/go-openapi/swag v0.22.8
+## explicit; go 1.19
+github.com/go-openapi/swag
 # github.com/godbus/dbus/v5 v5.2.2
 ## explicit; go 1.20
 github.com/godbus/dbus/v5
@@ -177,6 +186,15 @@ github.com/google/uuid
 github.com/grpc-ecosystem/grpc-gateway/v2/internal/httprule
 github.com/grpc-ecosystem/grpc-gateway/v2/runtime
 github.com/grpc-ecosystem/grpc-gateway/v2/utilities
+# github.com/hashicorp/errwrap v1.1.0
+## explicit
+github.com/hashicorp/errwrap
+# github.com/hashicorp/go-multierror v1.1.1
+## explicit; go 1.13
+github.com/hashicorp/go-multierror
+# github.com/invopop/yaml v0.2.0
+## explicit; go 1.14
+github.com/invopop/yaml
 # github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99
 ## explicit
 github.com/jbenet/go-context/io
@@ -188,6 +206,9 @@ github.com/jchv/go-winloader/internal/memloader
 github.com/jchv/go-winloader/internal/pe
 github.com/jchv/go-winloader/internal/vmem
 github.com/jchv/go-winloader/internal/winloader
+# github.com/josharian/intern v1.0.0
+## explicit; go 1.5
+github.com/josharian/intern
 # github.com/kevinburke/ssh_config v1.4.0
 ## explicit; go 1.18
 github.com/kevinburke/ssh_config
@@ -203,12 +224,20 @@ github.com/leaanthony/u
 # github.com/lmittmann/tint v1.1.2
 ## explicit; go 1.21
 github.com/lmittmann/tint
+# github.com/mailru/easyjson v0.9.0
+## explicit; go 1.20
+github.com/mailru/easyjson/buffer
+github.com/mailru/easyjson/jlexer
+github.com/mailru/easyjson/jwriter
 # github.com/mattn/go-colorable v0.1.14
 ## explicit; go 1.18
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.20
 ## explicit; go 1.15
 github.com/mattn/go-isatty
+# github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
+## explicit
+github.com/mohae/deepcopy
 # github.com/openai/openai-go v1.12.0
 ## explicit; go 1.21
 github.com/openai/openai-go
@@ -235,6 +264,9 @@ github.com/openai/openai-go/webhooks
 ## explicit; go 1.13
 github.com/panjf2000/ants/v2
 github.com/panjf2000/ants/v2/internal/sync
+# github.com/perimeterx/marshmallow v1.1.5
+## explicit; go 1.17
+github.com/perimeterx/marshmallow
 # github.com/pjbgf/sha1cd v0.5.0
 ## explicit; go 1.22
 github.com/pjbgf/sha1cd
@@ -302,6 +334,9 @@ github.com/wailsapp/wails/v3/pkg/w32
 # github.com/xanzy/ssh-agent v0.3.3
 ## explicit; go 1.16
 github.com/xanzy/ssh-agent
+# github.com/yosida95/uritemplate/v3 v3.0.2
+## explicit; go 1.14
+github.com/yosida95/uritemplate/v3
 # go.opentelemetry.io/otel v1.29.0
 ## explicit; go 1.21
 go.opentelemetry.io/otel
@@ -404,6 +439,7 @@ golang.org/x/net/trace
 # golang.org/x/sync v0.19.0
 ## explicit; go 1.24.0
 golang.org/x/sync/errgroup
+golang.org/x/sync/singleflight
 # golang.org/x/sys v0.40.0
 ## explicit; go 1.24.0
 golang.org/x/sys/cpu
@@ -604,7 +640,22 @@ trpc.group/trpc-go/trpc-agent-go/telemetry/semconv/metrics
 trpc.group/trpc-go/trpc-agent-go/telemetry/semconv/trace
 trpc.group/trpc-go/trpc-agent-go/telemetry/trace
 trpc.group/trpc-go/trpc-agent-go/tool
+trpc.group/trpc-go/trpc-agent-go/tool/file
 trpc.group/trpc-go/trpc-agent-go/tool/function
+trpc.group/trpc-go/trpc-agent-go/tool/hostexec
+trpc.group/trpc-go/trpc-agent-go/tool/mcp
 trpc.group/trpc-go/trpc-agent-go/tool/skill
 trpc.group/trpc-go/trpc-agent-go/tool/transfer
 trpc.group/trpc-go/trpc-agent-go/tool/workspaceexec
+# trpc.group/trpc-go/trpc-mcp-go v0.0.10
+## explicit; go 1.20
+trpc.group/trpc-go/trpc-mcp-go
+trpc.group/trpc-go/trpc-mcp-go/internal/context
+trpc.group/trpc-go/trpc-mcp-go/internal/errors
+trpc.group/trpc-go/trpc-mcp-go/internal/httputil
+trpc.group/trpc-go/trpc-mcp-go/internal/log
+trpc.group/trpc-go/trpc-mcp-go/internal/retry
+trpc.group/trpc-go/trpc-mcp-go/internal/schema
+trpc.group/trpc-go/trpc-mcp-go/internal/session
+trpc.group/trpc-go/trpc-mcp-go/internal/sseutil
+trpc.group/trpc-go/trpc-mcp-go/internal/utils

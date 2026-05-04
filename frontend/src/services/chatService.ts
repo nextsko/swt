@@ -1,3 +1,4 @@
+import { Call } from '@wailsio/runtime'
 import * as ChatBinding from '../../bindings/changeme/backend/services/chatservice.js'
 import type { Conversation, Message, MessageStatus } from '../types'
 import {
@@ -40,11 +41,29 @@ function applyMockStatus(messageID: string, status: MessageStatus) {
     }
 }
 
+function getSortedMockConversations(): Conversation[] {
+    return [...mockConversations].sort((a, b) => {
+        if (a.pinned !== b.pinned) return a.pinned ? -1 : 1
+        return b.lastTime - a.lastTime
+    })
+}
+
 const statusEmitter = {
     listeners: new Set<(ev: StatusEvent) => void>(),
     emit(ev: StatusEvent) {
         this.listeners.forEach((fn) => fn(ev))
     },
+}
+
+const conversationEmitter = {
+    listeners: new Set<() => void>(),
+    emit() {
+        this.listeners.forEach((fn) => fn())
+    },
+}
+
+function emitConversationChange() {
+    conversationEmitter.emit()
 }
 
 export interface StatusEvent {
@@ -55,7 +74,7 @@ export interface StatusEvent {
 
 export const chatService = {
     async getConversations(): Promise<Conversation[]> {
-        if (shouldUseMock()) return mockConversations
+        if (shouldUseMock()) return getSortedMockConversations()
         const result = await ChatBinding.GetConversations()
         return (result ?? []) as unknown as Conversation[]
     },
@@ -97,10 +116,13 @@ export const chatService = {
             }
             if (!localMockMessages[conversationId]) localMockMessages[conversationId] = []
             localMockMessages[conversationId].push(msg)
+            syncMockConversation(conversationId)
             scheduleMockStatus(msg)
+            emitConversationChange()
             return msg
         }
         const result = await ChatBinding.SendText(conversationId, text, mentions)
+        if (result) emitConversationChange()
         return (result ?? null) as unknown as Message | null
     },
 
@@ -114,10 +136,13 @@ export const chatService = {
                 ...(localMockMessages[conversationId] ?? []),
                 msg,
             ]
+            syncMockConversation(conversationId)
             scheduleMockStatus(msg)
+            emitConversationChange()
             return msg
         }
         const res = await ChatBinding.SendImage(conversationId, mediaUrl)
+        if (res) emitConversationChange()
         return (res ?? null) as unknown as Message | null
     },
 
@@ -128,10 +153,13 @@ export const chatService = {
                 ...(localMockMessages[conversationId] ?? []),
                 msg,
             ]
+            syncMockConversation(conversationId)
             scheduleMockStatus(msg)
+            emitConversationChange()
             return msg
         }
         const res = await ChatBinding.SendVoice(conversationId, durationSec)
+        if (res) emitConversationChange()
         return (res ?? null) as unknown as Message | null
     },
 
@@ -150,10 +178,13 @@ export const chatService = {
                 ...(localMockMessages[conversationId] ?? []),
                 msg,
             ]
+            syncMockConversation(conversationId)
             scheduleMockStatus(msg)
+            emitConversationChange()
             return msg
         }
         const res = await ChatBinding.SendFile(conversationId, fileName, mediaUrl)
+        if (res) emitConversationChange()
         return (res ?? null) as unknown as Message | null
     },
 
@@ -164,10 +195,13 @@ export const chatService = {
                 ...(localMockMessages[conversationId] ?? []),
                 msg,
             ]
+            syncMockConversation(conversationId)
             scheduleMockStatus(msg)
+            emitConversationChange()
             return msg
         }
         const res = await ChatBinding.SendLocation(conversationId, title)
+        if (res) emitConversationChange()
         return (res ?? null) as unknown as Message | null
     },
 
@@ -182,9 +216,45 @@ export const chatService = {
             // mock 也要清 unread
             const idx = mockConversations.findIndex((c) => c.id === conversationId)
             if (idx >= 0) mockConversations[idx].unreadCount = 0
+            emitConversationChange()
             return
         }
         await ChatBinding.MarkRead(conversationId)
+        emitConversationChange()
+    },
+
+    async setPinned(conversationId: string, pinned: boolean): Promise<void> {
+        if (shouldUseMock()) {
+            const idx = mockConversations.findIndex((c) => c.id === conversationId)
+            if (idx >= 0) mockConversations[idx].pinned = pinned
+            emitConversationChange()
+            return
+        }
+        await Call.ByName('changeme/backend/services.ChatService.SetPinned', conversationId, pinned)
+        emitConversationChange()
+    },
+
+    async setMute(conversationId: string, mute: boolean): Promise<void> {
+        if (shouldUseMock()) {
+            const idx = mockConversations.findIndex((c) => c.id === conversationId)
+            if (idx >= 0) mockConversations[idx].muteNotice = mute
+            emitConversationChange()
+            return
+        }
+        await Call.ByName('changeme/backend/services.ChatService.SetMute', conversationId, mute)
+        emitConversationChange()
+    },
+
+    async deleteConversation(conversationId: string): Promise<void> {
+        if (shouldUseMock()) {
+            const idx = mockConversations.findIndex((c) => c.id === conversationId)
+            if (idx >= 0) mockConversations.splice(idx, 1)
+            delete localMockMessages[conversationId]
+            emitConversationChange()
+            return
+        }
+        await Call.ByName('changeme/backend/services.ChatService.DeleteConversation', conversationId)
+        emitConversationChange()
     },
 
     async recallMessage(messageId: string): Promise<void> {
@@ -192,6 +262,7 @@ export const chatService = {
             for (const list of Object.values(localMockMessages)) {
                 const idx = list.findIndex((m) => m.id === messageId)
                 if (idx >= 0) {
+                    const conversationId = list[idx].conversationId
                     const name = list[idx].senderName || '成员'
                     list[idx] = {
                         ...list[idx],
@@ -202,12 +273,15 @@ export const chatService = {
                         status: undefined,
                         isSelf: false,
                     }
+                    syncMockConversation(conversationId)
+                    emitConversationChange()
                     return
                 }
             }
             return
         }
         await ChatBinding.RecallMessage(messageId)
+        emitConversationChange()
     },
 
     async deleteMessage(messageId: string): Promise<void> {
@@ -222,22 +296,28 @@ export const chatService = {
                         const last = list[list.length - 1]
                         mockConversations[convIdx].lastMessage = last.text ?? ''
                         mockConversations[convIdx].lastTime = last.timestamp
+                    } else if (convIdx >= 0) {
+                        mockConversations[convIdx].lastMessage = ''
                     }
+                    emitConversationChange()
                     return
                 }
             }
             return
         }
         await ChatBinding.DeleteMessage(messageId)
+        emitConversationChange()
     },
 
     async setDraft(conversationId: string, draft: string): Promise<void> {
         if (shouldUseMock()) {
             const idx = mockConversations.findIndex((c) => c.id === conversationId)
             if (idx >= 0) mockConversations[idx].draft = draft
+            emitConversationChange()
             return
         }
         await ChatBinding.SetDraft(conversationId, draft)
+        emitConversationChange()
     },
 
     async createGroup(title: string, memberIds: string[]): Promise<Conversation | null> {
@@ -271,10 +351,21 @@ export const chatService = {
                     isSelf: false,
                 },
             ]
+            emitConversationChange()
             return conv
         }
         const res = await ChatBinding.CreateGroup(title, memberIds)
+        if (res) emitConversationChange()
         return (res ?? null) as unknown as Conversation | null
+    },
+
+    notifyConversationChange(): void {
+        emitConversationChange()
+    },
+
+    onConversationChange(handler: () => void): () => void {
+        conversationEmitter.listeners.add(handler)
+        return () => conversationEmitter.listeners.delete(handler)
     },
 
     onStatus(handler: (ev: StatusEvent) => void): () => void {
@@ -306,5 +397,38 @@ function mockSelfMsg(conversationId: string, extra: Partial<Message>): Message {
         isSelf: true,
         status: 'sending',
         ...extra,
+    }
+}
+
+function syncMockConversation(conversationId: string) {
+    const idx = mockConversations.findIndex((c) => c.id === conversationId)
+    if (idx < 0) return
+    const list = localMockMessages[conversationId] ?? []
+    const last = list[list.length - 1]
+    if (!last) return
+    mockConversations[idx].lastMessage = getMessagePreview(last)
+    mockConversations[idx].lastTime = last.timestamp
+}
+
+function getMessagePreview(message: Message): string {
+    switch (message.type) {
+        case 'image':
+            return '[图片]'
+        case 'video':
+            return '[视频]'
+        case 'voice':
+            return '[语音]'
+        case 'call':
+            return '[音视频通话]'
+        case 'file':
+            return message.fileName ? `[文件] ${message.fileName}` : '[文件]'
+        case 'location':
+            return '[位置]'
+        case 'redpacket':
+            return '[红包]'
+        case 'tip':
+            return message.text ?? ''
+        default:
+            return message.text ?? ''
     }
 }

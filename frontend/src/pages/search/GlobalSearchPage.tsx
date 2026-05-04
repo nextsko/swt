@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Avatar } from '../../components/common/Avatar'
 import { Page } from '../../components/layout/Page'
+import { getBotConversationId } from '../../lib/botConversation'
 import { cn } from '../../lib/cn'
 import { botService, chatService, contactService } from '../../services'
 import type { Bot, Contact, Conversation, Message } from '../../types'
@@ -49,7 +50,6 @@ export function GlobalSearchPage() {
     // 消息全文搜索：仅在用户开始输入后触发（限于非空会话）
     useEffect(() => {
         if (!q.trim()) {
-            setMessageHits([])
             return
         }
         let cancel = false
@@ -96,7 +96,7 @@ export function GlobalSearchPage() {
         <Page
             header={
                 <div
-                    className="flex items-center gap-2 px-3 pb-2 bg-[#2196F3] text-white"
+                    className="flex items-center gap-2 px-3 pb-2 bg-[var(--header-bg)] text-[var(--header-text)]"
                     style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 8px)' }}
                 >
                     <button
@@ -123,10 +123,10 @@ export function GlobalSearchPage() {
                     </div>
                 </div>
             }
-            contentClassName="bg-[#F2F2F7]"
+            contentClassName="bg-[var(--bg-primary)]"
         >
             {/* 过滤 chip */}
-            <div className="flex gap-2 px-4 py-2 overflow-x-auto border-b border-[#E5E5EA] bg-white">
+            <div className="flex gap-2 px-4 py-2 overflow-x-auto border-b border-[var(--border)] bg-[var(--bg-secondary)]">
                 {(
                     [
                         { k: 'all', label: '全部' },
@@ -141,8 +141,8 @@ export function GlobalSearchPage() {
                         className={cn(
                             'px-3 h-7 rounded-full text-[12px] flex-none',
                             kind === tab.k
-                                ? 'bg-[#2196F3] text-white'
-                                : 'bg-[#F2F2F7] text-[#3C3C43]',
+                                ? 'bg-[var(--accent)] text-white'
+                                : 'bg-[var(--bg-input)] text-[var(--text-secondary)]',
                         )}
                         onClick={() => setKind(tab.k)}
                     >
@@ -152,13 +152,13 @@ export function GlobalSearchPage() {
             </div>
 
             {!query && (
-                <div className="p-10 text-center text-[#8E8E93] text-sm">
+                <div className="p-10 text-center text-[var(--text-tertiary)] text-sm">
                     输入关键字搜索聊天、联系人、机器人或消息
                 </div>
             )}
 
             {query && totalCount === 0 && (
-                <div className="p-10 text-center text-[#8E8E93] text-sm">
+                <div className="p-10 text-center text-[var(--text-tertiary)] text-sm">
                     未找到与"{query}"相关的结果
                 </div>
             )}
@@ -187,7 +187,7 @@ export function GlobalSearchPage() {
                             sub={b.persona}
                             tag={b.installed ? '已添加' : undefined}
                             onClick={() =>
-                                b.installed ? navigate(`/chat/c_bot_${b.id}`.replace('c_bot_bot_', 'c_bot_')) : navigate('/bots')
+                                b.installed ? navigate(`/chat/${getBotConversationId(b.id)}`) : navigate(`/bots/${b.id}`)
                             }
                         />
                     ))}
@@ -197,7 +197,13 @@ export function GlobalSearchPage() {
             {query && (kind === 'all' || kind === 'contact') && filtered.contacts.length > 0 && (
                 <Section title="联系人">
                     {filtered.contacts.map((c) => (
-                        <Row key={c.id} avatar={c.avatarUrl} name={c.name} sub={c.wildFireId} />
+                        <Row
+                            key={c.id}
+                            avatar={c.avatarUrl}
+                            name={c.name}
+                            sub={c.wildFireId}
+                            onClick={() => navigate(`/contacts/${c.id}`)}
+                        />
                     ))}
                 </Section>
             )}
@@ -223,8 +229,8 @@ export function GlobalSearchPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div className="mb-3">
-            <div className="px-4 pt-3 pb-1 text-[12px] text-[#8E8E93]">{title}</div>
-            <div className="bg-white">{children}</div>
+            <div className="px-4 pt-3 pb-1 text-[12px] text-[var(--text-tertiary)]">{title}</div>
+            <div className="bg-[var(--bg-secondary)]">{children}</div>
         </div>
     )
 }
@@ -252,7 +258,7 @@ function Row({
         return (
             <>
                 {sub.slice(0, i)}
-                <span className="text-[#2196F3] font-medium">
+                <span className="text-[var(--accent)] font-medium">
                     {sub.slice(i, i + highlight.length)}
                 </span>
                 {sub.slice(i + highlight.length)}
@@ -262,14 +268,14 @@ function Row({
 
     return (
         <div
-            className="flex items-center gap-3 pl-4 bg-white active:bg-[#F2F2F7] cursor-pointer"
+            className="flex items-center gap-3 pl-4 bg-[var(--bg-secondary)] active:bg-[var(--bg-input)] cursor-pointer"
             onClick={onClick}
         >
             <Avatar src={avatar} name={name} size={36} />
-            <div className="flex-1 min-w-0 flex items-center gap-3 py-2.5 pr-4 border-b border-[#E5E5EA]">
+            <div className="flex-1 min-w-0 flex items-center gap-3 py-2.5 pr-4 border-b border-[var(--border)]">
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                        <span className="text-[15px] text-[#08060d] font-medium truncate">
+                        <span className="text-[15px] text-[var(--text-primary)] font-medium truncate">
                             {name}
                         </span>
                         {tag && (
@@ -279,7 +285,7 @@ function Row({
                         )}
                     </div>
                     {sub && (
-                        <div className="text-[12px] text-[#8E8E93] truncate mt-0.5">
+                        <div className="text-[12px] text-[var(--text-tertiary)] truncate mt-0.5">
                             {renderSub()}
                         </div>
                     )}

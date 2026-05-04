@@ -16,6 +16,9 @@ type ConversationRepository interface {
 	MarkMessageReadBy(messageID, memberID string) error
 	// MarkConversationRead 清零未读，并把本会话中"别人发的"最近消息视为已读（针对 UI）
 	MarkConversationRead(conversationID string) error
+	SetConversationPinned(conversationID string, pinned bool) error
+	SetConversationMute(conversationID string, mute bool) error
+	DeleteConversation(conversationID string) error
 	// RecallMessage 将消息置为 tip 类型表示"已撤回"，清空原文/媒体。
 	RecallMessage(messageID string) error
 	// DeleteMessage 物理删除某条消息
@@ -41,6 +44,8 @@ type BotRepository interface {
 	ListInstalled() ([]domain.Bot, error)  // 已安装（用于联系人 Tab / @人）
 	GetBot(id string) (*domain.Bot, error) // 按 ID 取
 	SetInstalled(id string, installed bool) error
+	SetToolIds(id string, toolIds []string) error // 配置可用工具
+	AddBot(bot domain.Bot) error                  // 动态添加新机器人（由 Meta Agent 调用）
 }
 
 // DiscoverRepository 发现 Tab 数据访问接口

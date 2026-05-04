@@ -9,18 +9,18 @@ import type { SettingItem, User } from '../../types'
 
 function SettingRow({ item, last }: { item: SettingItem; last?: boolean }) {
     return (
-        <div className="flex items-center gap-3 pl-4 bg-white active:bg-[#F2F2F7] cursor-pointer">
+        <div className="flex items-center gap-3 pl-4 bg-[var(--bg-secondary)] active:bg-[var(--bg-input)] cursor-pointer">
             <IconTile icon={item.icon} iconColor={item.iconColor} size={20} />
             <div
                 className={
                     'flex-1 min-w-0 flex items-center gap-3 py-3 pr-4 ' +
-                    (last ? '' : 'border-b border-[#E5E5EA]')
+                    (last ? '' : 'border-b border-[var(--border)]')
                 }
             >
-                <div className="flex-1 text-[16px] text-[#08060d] font-medium">
+                <div className="flex-1 text-[16px] text-[var(--text-primary)] font-medium">
                     {item.title}
                 </div>
-                <ChevronRight className="w-5 h-5 text-[#C7C7CC]" />
+                <ChevronRight className="w-5 h-5 text-[var(--text-quaternary)]" />
             </div>
         </div>
     )
@@ -50,21 +50,21 @@ export function ProfilePage() {
     return (
         <Page header={<PageHeader title="我的" />}>
             {loading ? (
-                <div className="p-6 text-center text-[#8E8E93] text-sm">加载中…</div>
+                <div className="p-6 text-center text-[var(--text-tertiary)] text-sm">加载中…</div>
             ) : (
                 <>
                     {user && (
-                        <div className="flex items-center gap-3 px-4 py-4 bg-white">
+                        <div className="flex items-center gap-3 px-4 py-4 bg-[var(--bg-secondary)]">
                             <Avatar src={user.avatarUrl} name={user.name} size={56} />
                             <div className="flex-1 min-w-0">
-                                <div className="text-[18px] text-[#08060d] font-semibold leading-tight">
+                                <div className="text-[18px] text-[var(--text-primary)] font-semibold leading-tight">
                                     {user.name}
                                 </div>
-                                <div className="text-[12px] text-[#8E8E93] mt-1.5 truncate">
+                                <div className="text-[12px] text-[var(--text-tertiary)] mt-1.5 truncate">
                                     野火号: {user.wildFireId}
                                 </div>
                             </div>
-                            <ChevronRight className="w-5 h-5 text-[#C7C7CC]" />
+                            <ChevronRight className="w-5 h-5 text-[var(--text-quaternary)]" />
                         </div>
                     )}
 

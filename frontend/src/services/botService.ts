@@ -1,4 +1,5 @@
 import * as BotBinding from '../../bindings/changeme/backend/services/botservice.js'
+import { getBotConversationId } from '../lib/botConversation'
 import type { Bot, Conversation } from '../types'
 import { shouldUseMock } from './mockFallback'
 
@@ -76,6 +77,18 @@ const mockBots: Bot[] = [
         installed: false,
         accentColor: 'bg-sky-500',
     },
+    {
+        id: 'bot_creator',
+        name: '造物主',
+        avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=creator&backgroundColor=6366f1',
+        persona: '机器人创造者，帮你设计和创建新的 AI 机器人角色。',
+        systemPrompt: '',
+        greeting: '我是造物主 🧙，可以帮你创建新的 AI 机器人！告诉我你想要什么样的机器人。',
+        temperature: 0.7,
+        maxTokens: 2048,
+        installed: false,
+        accentColor: 'bg-indigo-500',
+    },
 ]
 
 export const botService = {
@@ -102,7 +115,7 @@ export const botService = {
             const idx = mockBots.findIndex((b) => b.id === id)
             if (idx >= 0) mockBots[idx].installed = true
             return {
-                id: `c_bot_${id}`,
+                id: getBotConversationId(id),
                 type: 'bot',
                 title: mockBots[idx]?.name ?? id,
                 avatarUrl: mockBots[idx]?.avatar ?? '',
@@ -126,5 +139,14 @@ export const botService = {
             return
         }
         await BotBinding.UninstallBot(id)
+    },
+
+    async setToolIds(id: string, toolIds: string[]): Promise<void> {
+        if (shouldUseMock()) {
+            const idx = mockBots.findIndex((b) => b.id === id)
+            if (idx >= 0) mockBots[idx].toolIds = toolIds
+            return
+        }
+        await BotBinding.SetToolIds(id, toolIds)
     },
 }

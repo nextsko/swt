@@ -72,7 +72,7 @@ export function MarkdownText({
                             'my-1 text-[12px] rounded',
                             isSelf
                                 ? 'text-white/70'
-                                : 'text-[#8E8E93]',
+                                : 'text-[var(--text-tertiary)]',
                         )}
                     >
                         <summary className="cursor-pointer select-none italic opacity-80">
@@ -118,7 +118,7 @@ function MarkdownBlock({ text, isSelf }: { text: string; isSelf?: boolean }) {
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={isSelf ? 'underline text-white' : 'underline text-[#2196F3]'}
+                        className={isSelf ? 'underline text-white' : 'underline text-[var(--accent)]'}
                     >
                         {children}
                     </a>
@@ -130,7 +130,7 @@ function MarkdownBlock({ text, isSelf }: { text: string; isSelf?: boolean }) {
                             <code
                                 className={cn(
                                     'px-1 py-0.5 rounded text-[13px] font-mono',
-                                    isSelf ? 'bg-white/20' : 'bg-[#F2F2F7]',
+                                    isSelf ? 'bg-white/20' : 'bg-[var(--code-inline-bg)]',
                                 )}
                                 {...props}
                             >
@@ -148,7 +148,7 @@ function MarkdownBlock({ text, isSelf }: { text: string; isSelf?: boolean }) {
                     <pre
                         className={cn(
                             'my-1.5 p-2.5 rounded-lg overflow-x-auto text-[13px] font-mono',
-                            isSelf ? 'bg-black/30 text-white' : 'bg-[#1e1e1e] text-white',
+                            isSelf ? 'bg-black/30 text-white' : 'bg-[var(--code-bg)] text-[var(--code-text)]',
                         )}
                     >
                         {children}
@@ -158,7 +158,7 @@ function MarkdownBlock({ text, isSelf }: { text: string; isSelf?: boolean }) {
                     <blockquote
                         className={cn(
                             'border-l-2 pl-2 my-1 italic',
-                            isSelf ? 'border-white/50' : 'border-[#C7C7CC]',
+                            isSelf ? 'border-white/50' : 'border-[var(--border)]',
                         )}
                     >
                         {children}
@@ -170,12 +170,12 @@ function MarkdownBlock({ text, isSelf }: { text: string; isSelf?: boolean }) {
                     </div>
                 ),
                 th: ({ children }) => (
-                    <th className="border border-[#E5E5EA] px-2 py-1 text-left font-semibold">
+                    <th className="border border-[var(--border)] px-2 py-1 text-left font-semibold">
                         {children}
                     </th>
                 ),
                 td: ({ children }) => (
-                    <td className="border border-[#E5E5EA] px-2 py-1">{children}</td>
+                    <td className="border border-[var(--border)] px-2 py-1">{children}</td>
                 ),
             }}
         >

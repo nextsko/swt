@@ -11,13 +11,19 @@ import (
 // Pool 按 bot ID 懒加载并复用 Agent 实例。
 // 相同 MiniMax Key 下以不同 SystemPrompt/Temperature/MaxTokens 派生多个角色。
 type Pool struct {
-	mu   sync.Mutex
-	cfg  Config
-	bots map[string]*Agent
+	mu          sync.Mutex
+	cfg         Config
+	bots        map[string]*Agent
+	createBotTS *CreateBotToolSet // 可选：Meta Agent 专用的 create_bot 工具集
 }
 
 func NewPool(cfg Config) *Pool {
 	return &Pool{cfg: cfg, bots: map[string]*Agent{}}
+}
+
+// SetCreateBotToolSet 注入 create_bot 工具集，使 Meta Agent 可以动态创建机器人。
+func (p *Pool) SetCreateBotToolSet(ts *CreateBotToolSet) {
+	p.createBotTS = ts
 }
 
 func (p *Pool) Ready() bool { return p.cfg.IsConfigured() }
@@ -32,7 +38,7 @@ func (p *Pool) GetOrInit(bot domain.Bot) (*Agent, error) {
 	if a, ok := p.bots[bot.ID]; ok && a != nil {
 		return a, nil
 	}
-	a, err := NewFromBot(p.cfg, bot)
+	a, err := NewFromBot(p.cfg, bot, p.createBotTS)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +55,7 @@ func (p *Pool) Chat(ctx context.Context, bot domain.Bot, sessionID, userText str
 	return a.ChatSession(ctx, sessionID, userText, onChunk)
 }
 
-// Close 释放所有底层 runner。
+// Close 释放所有底层 runner 和 MCP toolset。
 func (p *Pool) Close() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -57,4 +63,14 @@ func (p *Pool) Close() {
 		a.Close()
 	}
 	p.bots = map[string]*Agent{}
+}
+
+// Invalidate 使指定 bot 的缓存 Agent 失效，下次 Chat 时会以新配置重建。
+func (p *Pool) Invalidate(botID string) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if a, ok := p.bots[botID]; ok {
+		a.Close()
+		delete(p.bots, botID)
+	}
 }

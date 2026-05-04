@@ -32,7 +32,7 @@ export function ChatBubble({
     if (message.type === 'tip') {
         return (
             <div className="flex justify-center my-2">
-                <span className="text-[12px] text-[#8E8E93] bg-[#E5E5EA]/60 px-3 py-1 rounded">
+                <span className="text-[12px] text-[var(--text-tertiary)] bg-[var(--bubble-tip-bg)] px-3 py-1 rounded">
                     {message.text}
                 </span>
             </div>
@@ -42,8 +42,8 @@ export function ChatBubble({
     const isSelf = message.isSelf
     const bubbleBase = 'w-fit max-w-full rounded-2xl px-3 py-2 leading-relaxed text-[15px] select-text'
     const bubbleSide = isSelf
-        ? 'bg-[#2196F3] text-white rounded-tr-sm'
-        : 'bg-white text-[#08060d] rounded-tl-sm shadow-sm'
+        ? 'bg-[var(--bubble-self)] text-[var(--bubble-self-text)] rounded-tr-sm'
+        : 'bg-[var(--bubble-other)] text-[var(--bubble-other-text)] rounded-tl-sm shadow-sm'
 
     return (
         <div
@@ -52,7 +52,7 @@ export function ChatBubble({
             <Avatar src={message.senderAvatar} name={message.senderName} size={36} />
             <div className={cn('flex flex-col max-w-[78%] gap-0.5', isSelf && 'items-end')}>
                 {!isSelf && !!groupSize && groupSize > 2 && (
-                    <div className="text-[11px] text-[#8E8E93] mb-0.5 px-1">
+                    <div className="text-[11px] text-[var(--text-tertiary)] mb-0.5 px-1">
                         {message.senderName}
                     </div>
                 )}
@@ -66,7 +66,7 @@ export function ChatBubble({
                             groupSize={groupSize}
                             onSelfBubble={false}
                         />
-                        <span className="text-[10px] text-[#C7C7CC]">
+                        <span className="text-[10px] text-[var(--text-quaternary)]">
                             {formatMessageTime(message.timestamp)}
                         </span>
                     </div>
@@ -124,7 +124,7 @@ function renderContent(message: Message, base: string, side: string) {
         case 'call':
             return (
                 <div
-                    className={cn(base, side, 'flex items-center gap-2 text-[13px]', message.isSelf ? 'text-white/90' : 'text-[#8E8E93]')}
+                    className={cn(base, side, 'flex items-center gap-2 text-[13px]', message.isSelf ? 'text-[var(--bubble-self-text)]' : 'text-[var(--bubble-other-text)]')}
                 >
                     <Phone className="w-4 h-4" strokeWidth={2.5} />
                     <span>{message.text || '[音视频通话]'}</span>
@@ -136,7 +136,7 @@ function renderContent(message: Message, base: string, side: string) {
                     <FileText className="w-6 h-6 shrink-0" strokeWidth={1.8} />
                     <div className="min-w-0">
                         <div className="text-[14px] truncate">{message.fileName || '未命名文件'}</div>
-                        <div className={cn('text-[11px]', message.isSelf ? 'text-white/70' : 'text-[#8E8E93]')}>
+                        <div className={cn('text-[11px]', message.isSelf ? 'text-white/70' : 'text-[var(--text-tertiary)]')}>
                             文件
                         </div>
                     </div>
@@ -149,7 +149,7 @@ function renderContent(message: Message, base: string, side: string) {
                         <MapPin className="w-4 h-4" strokeWidth={2.2} />
                         <span className="text-[14px]">{message.text || '位置'}</span>
                     </div>
-                    <div className={cn('text-[11px]', message.isSelf ? 'text-white/70' : 'text-[#8E8E93]')}>
+                    <div className={cn('text-[11px]', message.isSelf ? 'text-white/70' : 'text-[var(--text-tertiary)]')}>
                         [共享位置]
                     </div>
                 </div>

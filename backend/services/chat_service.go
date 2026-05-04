@@ -114,6 +114,18 @@ func (s *ChatService) MarkRead(conversationID string) error {
 	return s.repo.MarkConversationRead(conversationID)
 }
 
+func (s *ChatService) SetPinned(conversationID string, pinned bool) error {
+	return s.repo.SetConversationPinned(conversationID, pinned)
+}
+
+func (s *ChatService) SetMute(conversationID string, mute bool) error {
+	return s.repo.SetConversationMute(conversationID, mute)
+}
+
+func (s *ChatService) DeleteConversation(conversationID string) error {
+	return s.repo.DeleteConversation(conversationID)
+}
+
 // CreateGroup 创建群聊。memberIDs 可混合 u_* 与 bot_* ID。
 func (s *ChatService) CreateGroup(title string, memberIDs []string) (*domain.Conversation, error) {
 	return s.repo.CreateGroup(title, "u_me", memberIDs)

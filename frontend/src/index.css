@@ -1,5 +1,83 @@
 @import "tailwindcss";
-@import "highlight.js/styles/github-dark.css";
+@import "highlight.js/styles/github.css" (prefers-color-scheme: light);
+@import "highlight.js/styles/github-dark-dimmed.css" (prefers-color-scheme: dark);
+
+/* ===== CSS 变量：亮色 / 暗色 ===== */
+:root {
+  --bg-primary: #F2F2F7;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #F8F8F9;
+  --bg-input: #F2F2F7;
+  --text-primary: #08060d;
+  --text-secondary: #3C3C43;
+  --text-tertiary: #8E8E93;
+  --text-quaternary: #C7C7CC;
+  --accent: #2196F3;
+  --accent-hover: #1976D2;
+  --accent-light: rgba(33, 150, 243, 0.1);
+  --border: #E5E5EA;
+  --border-light: #E5E5EA;
+  --bubble-self: #2196F3;
+  --bubble-self-text: #FFFFFF;
+  --bubble-other: #FFFFFF;
+  --bubble-other-text: #08060d;
+  --bubble-tip-bg: rgba(229, 229, 234, 0.6);
+  --danger: #FF3B30;
+  --redpacket-from: #FF6B35;
+  --redpacket-to: #FF3B30;
+  --code-bg: #1e1e1e;
+  --code-text: #d4d4d4;
+  --code-inline-bg: #F2F2F7;
+  --shadow-bubble: 0 1px 2px rgba(0,0,0,0.06);
+  --tabbar-bg: #FFFFFF;
+  --tabbar-border: #E5E5EA;
+  --tabbar-active: #2196F3;
+  --tabbar-inactive: #8E8E93;
+  --header-bg: #2196F3;
+  --header-text: #FFFFFF;
+  --composer-bg: #FFFFFF;
+  --composer-border: #E5E5EA;
+  --composer-input-bg: #F2F2F7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #000000;
+    --bg-secondary: #1C1C1E;
+    --bg-tertiary: #2C2C2E;
+    --bg-input: #1C1C1E;
+    --text-primary: #FFFFFF;
+    --text-secondary: #EBEBF5;
+    --text-tertiary: #8E8E93;
+    --text-quaternary: #636366;
+    --accent: #0A84FF;
+    --accent-hover: #409CFF;
+    --accent-light: rgba(10, 132, 255, 0.15);
+    --border: #38383A;
+    --border-light: #2C2C2E;
+    --bubble-self: #0A84FF;
+    --bubble-self-text: #FFFFFF;
+    --bubble-other: #1C1C1E;
+    --bubble-other-text: #FFFFFF;
+    --bubble-tip-bg: rgba(58, 58, 60, 0.6);
+    --danger: #FF453A;
+    --redpacket-from: #FF6B35;
+    --redpacket-to: #FF3B30;
+    --code-bg: #1e1e1e;
+    --code-text: #d4d4d4;
+    --code-inline-bg: #2C2C2E;
+    --shadow-bubble: 0 1px 3px rgba(0,0,0,0.3);
+    --tabbar-bg: #1C1C1E;
+    --tabbar-border: #38383A;
+    --tabbar-active: #0A84FF;
+    --tabbar-inactive: #8E8E93;
+    --header-bg: #1C1C1E;
+    --header-text: #FFFFFF;
+    --composer-bg: #1C1C1E;
+    --composer-border: #38383A;
+    --composer-input-bg: #2C2C2E;
+  }
+}
 
 html,
 body,
@@ -11,8 +89,8 @@ body,
     "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #08060d;
-  background: #F2F2F7;
+  color: var(--text-primary);
+  background: var(--bg-primary);
 }
 
 * {
@@ -37,7 +115,6 @@ img {
   user-select: none;
 }
 
-/* typing indicator dot animation */
 @keyframes typing-bounce {
   0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
   30% { transform: translateY(-3px); opacity: 1; }

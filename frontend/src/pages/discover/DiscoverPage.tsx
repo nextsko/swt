@@ -26,21 +26,21 @@ export function DiscoverPage() {
     return (
         <Page header={<PageHeader title="发现" />}>
             {loading ? (
-                <div className="p-6 text-center text-[#8E8E93] text-sm">加载中…</div>
+                <div className="p-6 text-center text-[var(--text-tertiary)] text-sm">加载中…</div>
             ) : (
-                <div className="bg-white">
+                <div className="bg-[var(--bg-secondary)]">
                     {features.map((f) => (
                         <div
                             key={f.key}
-                            className="flex items-center gap-3 pl-4 active:bg-[#F2F2F7] cursor-pointer"
+                            className="flex items-center gap-3 pl-4 active:bg-[var(--bg-input)] cursor-pointer"
                             onClick={() => handleClick(f)}
                         >
                             <IconTile icon={f.icon} iconColor={f.iconColor} size={22} />
-                            <div className="flex-1 min-w-0 flex items-center gap-3 py-3 pr-4 border-b border-[#E5E5EA]">
-                                <div className="flex-1 text-[16px] text-[#08060d] font-medium">
+                            <div className="flex-1 min-w-0 flex items-center gap-3 py-3 pr-4 border-b border-[var(--border)]">
+                                <div className="flex-1 text-[16px] text-[var(--text-primary)] font-medium">
                                     {f.title}
                                 </div>
-                                <ChevronRight className="w-5 h-5 text-[#C7C7CC]" />
+                                <ChevronRight className="w-5 h-5 text-[var(--text-quaternary)]" />
                             </div>
                         </div>
                     ))}

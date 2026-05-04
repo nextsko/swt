@@ -6,8 +6,8 @@ import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
 import { useBots } from '../../hooks/useBots'
 import { useContacts } from '../../hooks/useContacts'
-import { chatService } from '../../services'
 import { cn } from '../../lib/cn'
+import { chatService } from '../../services'
 
 /**
  * 创建群聊：
@@ -63,7 +63,7 @@ export function CreateGroupPage() {
                     title={<span className="text-[22px] font-semibold">发起群聊</span>}
                     left={
                         <button
-                            className="text-white -ml-1 mr-1"
+                            className="text-[var(--header-text)] -ml-1 mr-1"
                             onClick={() => navigate(-1)}
                             aria-label="back"
                         >
@@ -75,7 +75,7 @@ export function CreateGroupPage() {
                             className={cn(
                                 'px-3 h-7 rounded-full text-[13px] font-medium transition-colors',
                                 pickedList.length > 0
-                                    ? 'bg-white text-[#2196F3]'
+                                    ? 'bg-white text-[var(--accent)]'
                                     : 'bg-white/25 text-white/60',
                             )}
                             disabled={pickedList.length === 0 || submitting}
@@ -88,12 +88,12 @@ export function CreateGroupPage() {
             }
             contentClassName="pb-28"
         >
-            <div className="px-4 py-3 bg-white border-b border-[#E5E5EA]">
+            <div className="px-4 py-3 bg-[var(--bg-secondary)] border-b border-[var(--border)]">
                 <input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="群聊名称（可选）"
-                    className="w-full h-9 bg-[#F2F2F7] rounded-lg px-3 text-[14px] focus:outline-none"
+                    className="w-full h-9 bg-[var(--bg-input)] rounded-lg px-3 text-[14px] focus:outline-none"
                 />
             </div>
 
@@ -130,18 +130,18 @@ export function CreateGroupPage() {
 
             {pickedList.length > 0 && (
                 <div
-                    className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E5EA] px-3 py-2 flex items-center gap-2 overflow-x-auto"
+                    className="fixed bottom-0 left-0 right-0 bg-[var(--bg-secondary)] border-t border-[var(--border)] px-3 py-2 flex items-center gap-2 overflow-x-auto"
                     style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 8px)' }}
                 >
                     {pickedList.map((m) => (
                         <div
                             key={m.id}
-                            className="flex-none flex items-center gap-1 pr-1 pl-0.5 rounded-full bg-[#F2F2F7]"
+                            className="flex-none flex items-center gap-1 pr-1 pl-0.5 rounded-full bg-[var(--bg-input)]"
                         >
                             <Avatar src={m.avatar} name={m.name} size={24} />
                             <span className="text-[12px]">{m.name}</span>
                             <button
-                                className="w-5 h-5 flex items-center justify-center text-[#8E8E93] text-[14px]"
+                                className="w-5 h-5 flex items-center justify-center text-[var(--text-tertiary)] text-[14px]"
                                 onClick={() => toggle(m.id)}
                             >
                                 ×
@@ -157,8 +157,8 @@ export function CreateGroupPage() {
 function SelectGroup({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div>
-            <div className="px-4 pt-4 pb-1 text-[12px] text-[#8E8E93]">{title}</div>
-            <div className="bg-white">{children}</div>
+            <div className="px-4 pt-4 pb-1 text-[12px] text-[var(--text-tertiary)]">{title}</div>
+            <div className="bg-[var(--bg-secondary)]">{children}</div>
         </div>
     )
 }
@@ -180,13 +180,13 @@ function SelectRow({
 }) {
     return (
         <button
-            className="w-full flex items-center gap-3 px-4 py-2 active:bg-[#F2F2F7]"
+            className="w-full flex items-center gap-3 px-4 py-2 active:bg-[var(--bg-input)]"
             onClick={() => onToggle(id)}
         >
             <div
                 className={cn(
                     'w-5 h-5 rounded-full border-2 flex items-center justify-center flex-none',
-                    checked ? 'bg-[#2196F3] border-[#2196F3]' : 'border-[#C7C7CC]',
+                    checked ? 'bg-[var(--accent)] border-[var(--accent)]' : 'border-[var(--text-quaternary)]',
                 )}
             >
                 {checked && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}

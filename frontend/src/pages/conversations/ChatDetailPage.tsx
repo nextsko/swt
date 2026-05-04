@@ -20,12 +20,15 @@ import { chatService } from '../../services'
 import type { Message } from '../../types'
 
 // 仅当"最近一条他人消息尚未产生任何文字"时显示打字指示
+// 即：streaming 状态 + 最后一条非自己消息的 text 为空
 function showTypingIndicator(messages: Message[]) {
+    if (messages.length === 0) return false
+    // 找到最后一条非自己的消息
     for (let i = messages.length - 1; i >= 0; i--) {
         const m = messages[i]
-        if (m.isSelf) return false
-        if (m.type !== 'text') return false
-        return !m.text || m.text.length === 0
+        if (m.isSelf) continue
+        // 找到了最后一条他人消息
+        return m.type === 'text' && (!m.text || m.text.length === 0)
     }
     return false
 }
@@ -180,7 +183,7 @@ export function ChatDetailPage() {
                     }
                     left={
                         <button
-                            className="text-white -ml-1 mr-1"
+                            className="text-[var(--header-text)] -ml-1 mr-1"
                             onClick={() => navigate('/messages')}
                             aria-label="back"
                         >
@@ -189,7 +192,7 @@ export function ChatDetailPage() {
                     }
                     right={
                         <button
-                            className="text-white"
+                            className="text-[var(--header-text)]"
                             onClick={() => {
                                 if (isGroup && id) navigate(`/group/${id}/members`)
                             }}
@@ -202,18 +205,18 @@ export function ChatDetailPage() {
             footer={
                 <>
                     {quote && (
-                        <div className="bg-[#E9ECF1] border-t border-[#D1D5DB] px-4 py-2 flex items-start gap-2">
-                            <div className="w-1 rounded bg-[#2196F3] self-stretch" />
+                        <div className="bg-[var(--bg-tertiary)] border-t border-[var(--border)] px-4 py-2 flex items-start gap-2">
+                            <div className="w-1 rounded bg-[var(--accent)] self-stretch" />
                             <div className="flex-1 min-w-0">
-                                <div className="text-[11px] text-[#3C3C43]">
+                                <div className="text-[11px] text-[var(--text-secondary)]">
                                     引用 {quote.senderName}
                                 </div>
-                                <div className="text-[12px] text-[#8E8E93] truncate">
+                                <div className="text-[12px] text-[var(--text-tertiary)] truncate">
                                     {quote.text}
                                 </div>
                             </div>
                             <button
-                                className="text-[#8E8E93] text-[18px] px-1"
+                                className="text-[var(--text-tertiary)] text-[18px] px-1"
                                 onClick={() => setQuote(null)}
                             >
                                 ×
@@ -232,12 +235,12 @@ export function ChatDetailPage() {
                     />
                 </>
             }
-            contentClassName="py-3 bg-[#F2F2F7]"
+            contentClassName="py-3 bg-[var(--bg-primary)]"
         >
             {grouped.map((item) =>
                 item.kind === 'time' ? (
                     <div key={item.id} className="flex justify-center my-3">
-                        <span className="text-[12px] text-[#8E8E93]">
+                        <span className="text-[12px] text-[var(--text-tertiary)]">
                             {formatMessageGroupTime(item.ts)}
                         </span>
                     </div>

@@ -109,7 +109,7 @@ export function GroupMembersPage() {
                     <PageHeader
                         title="群成员"
                         left={
-                            <button className="text-white -ml-1 mr-1" onClick={() => navigate(-1)}>
+                            <button className="text-[var(--header-text)] -ml-1 mr-1" onClick={() => navigate(-1)}>
                                 <ArrowLeft className="w-6 h-6" />
                             </button>
                         }
@@ -117,7 +117,7 @@ export function GroupMembersPage() {
                     />
                 }
             >
-                <div className="p-10 text-center text-[#8E8E93] text-sm">加载中…</div>
+                <div className="p-10 text-center text-[var(--text-tertiary)] text-sm">加载中…</div>
             </Page>
         )
     }
@@ -136,7 +136,7 @@ export function GroupMembersPage() {
                     }
                     left={
                         <button
-                            className="text-white -ml-1 mr-1"
+                            className="text-[var(--header-text)] -ml-1 mr-1"
                             onClick={() => navigate(-1)}
                             aria-label="back"
                         >
@@ -165,18 +165,18 @@ export function GroupMembersPage() {
                         <div className="relative">
                             <Avatar src={m.avatar} name={m.name} size={52} />
                             {m.isOwner && (
-                                <span className="absolute -top-1 -right-1 bg-[#FFCC00] text-[9px] text-[#3C3C43] px-1 rounded-sm font-semibold">
+                                <span className="absolute -top-1 -right-1 bg-[#FFCC00] text-[9px] text-[var(--text-secondary)] px-1 rounded-sm font-semibold">
                                     群主
                                 </span>
                             )}
                             {m.isBot && (
-                                <span className="absolute -bottom-1 -right-1 bg-[#2196F3] text-white text-[9px] px-1 rounded-sm font-medium">
+                                <span className="absolute -bottom-1 -right-1 bg-[var(--accent)] text-white text-[9px] px-1 rounded-sm font-medium">
                                     AI
                                 </span>
                             )}
                             {removing && !m.isOwner && !m.isSelf && (
                                 <button
-                                    className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-[#FF3B30] text-white flex items-center justify-center shadow"
+                                    className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-[var(--danger)] text-white flex items-center justify-center shadow"
                                     onClick={() => removeMember(m.id)}
                                     aria-label="remove"
                                 >
@@ -184,7 +184,7 @@ export function GroupMembersPage() {
                                 </button>
                             )}
                         </div>
-                        <span className="text-[12px] text-[#08060d] truncate max-w-[58px]">
+                        <span className="text-[12px] text-[var(--text-primary)] truncate max-w-[58px]">
                             {m.isSelf ? `${m.name}（我）` : m.name}
                         </span>
                     </div>
@@ -195,10 +195,10 @@ export function GroupMembersPage() {
                         className="flex flex-col items-center gap-1.5"
                         onClick={handleAddMember}
                     >
-                        <div className="w-[52px] h-[52px] rounded-full border-2 border-dashed border-[#C7C7CC] flex items-center justify-center">
-                            <Plus className="w-6 h-6 text-[#8E8E93]" />
+                        <div className="w-[52px] h-[52px] rounded-full border-2 border-dashed border-[var(--text-quaternary)] flex items-center justify-center">
+                            <Plus className="w-6 h-6 text-[var(--text-tertiary)]" />
                         </div>
-                        <span className="text-[12px] text-[#8E8E93]">添加</span>
+                        <span className="text-[12px] text-[var(--text-tertiary)]">添加</span>
                     </button>
                 )}
             </div>

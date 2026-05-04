@@ -12,8 +12,8 @@ export function SectionGroup({
   className?: string
 }) {
   return (
-    <div className={cn('bg-white', className)}>
-      <div className="divide-y divide-[#E5E5EA]">{children}</div>
+    <div className={cn('bg-[var(--bg-secondary)]', className)}>
+      <div className="divide-y divide-[var(--border)]">{children}</div>
     </div>
   )
 }
@@ -39,23 +39,23 @@ export function ListRow({
   return (
     <div
       className={cn(
-        'flex items-center gap-3 px-4 py-3 active:bg-[#F2F2F7] cursor-pointer',
+        'flex items-center gap-3 px-4 py-3 active:bg-[var(--bg-input)] cursor-pointer',
         className,
       )}
       onClick={onClick}
     >
       {leading}
       <div className="flex-1 min-w-0">
-        <div className="text-[17px] text-[#08060d] font-medium leading-tight truncate">
+        <div className="text-[17px] text-[var(--text-primary)] font-medium leading-tight truncate">
           {title}
         </div>
         {subtitle && (
-          <div className="text-[13px] text-[#8E8E93] mt-1 leading-tight truncate">
+          <div className="text-[13px] text-[var(--text-tertiary)] mt-1 leading-tight truncate">
             {subtitle}
           </div>
         )}
       </div>
-      {trailing && <div className="flex-none text-[#8E8E93] text-[12px]">{trailing}</div>}
+      {trailing && <div className="flex-none text-[var(--text-tertiary)] text-[12px]">{trailing}</div>}
     </div>
   )
 }

@@ -27,6 +27,10 @@ func main() {
 	// 初始化数据层（Mock 实现）
 	store := repository.NewMockStore()
 
+	agentSvc := services.NewAgentService(store, store)
+	botSvc := services.NewBotService(store, store, store)
+	botSvc.SetPoolInvalidator(agentSvc)
+
 	app := application.New(application.Options{
 		Name:        "swt",
 		Description: "A swt application",
@@ -36,8 +40,8 @@ func main() {
 			application.NewService(services.NewContactService(store)),
 			application.NewService(services.NewDiscoverService(store)),
 			application.NewService(services.NewProfileService(store)),
-			application.NewService(services.NewAgentService(store, store)),
-			application.NewService(services.NewBotService(store, store, store)),
+			application.NewService(agentSvc),
+			application.NewService(botSvc),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),

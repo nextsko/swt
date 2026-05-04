@@ -12,15 +12,14 @@ const (
 	AndroidToast          = 2
 )
 
-// iosMethodNames is empty on Android (iOS methods not available) — needed because
-// messageprocessor.go references iosMethodNames unconditionally at the call site.
-var iosMethodNames = map[int]string{}
-
 var androidMethodNames = map[int]string{
 	AndroidHapticsVibrate: "Haptics.Vibrate",
 	AndroidDeviceInfo:     "Device.Info",
 	AndroidToast:          "Toast.Show",
 }
+
+// iosMethodNames is empty on Android (iOS methods not available)
+var iosMethodNames = map[int]string{}
 
 func (m *MessageProcessor) processAndroidMethod(req *RuntimeRequest, window Window) (any, error) {
 	args := req.Args.AsMap()

@@ -37,7 +37,7 @@ export function MessageStatusTick({
             <span
                 className={cn(
                     'text-[10px] leading-none',
-                    onSelfBubble ? 'text-white/80' : 'text-[#8E8E93]',
+                    onSelfBubble ? 'text-white/80' : 'text-[var(--text-tertiary)]',
                 )}
             >
                 已读 {readCount}/{groupSize - 1}
@@ -98,10 +98,10 @@ function IconDoubleCheck({
                 read
                     ? onSelfBubble
                         ? 'text-white'
-                        : 'text-[#2196F3]'
+                        : 'text-[var(--accent)]'
                     : onSelfBubble
                         ? 'text-white/80'
-                        : 'text-[#8E8E93]',
+                        : 'text-[var(--text-tertiary)]',
             )}
             strokeWidth={3}
         />
@@ -109,5 +109,5 @@ function IconDoubleCheck({
 }
 
 function IconFailed() {
-    return <AlertCircle className="w-3.5 h-3.5 text-[#FF3B30]" strokeWidth={2.5} />
+    return <AlertCircle className="w-3.5 h-3.5 text-[var(--danger)]" strokeWidth={2.5} />
 }

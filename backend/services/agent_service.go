@@ -39,15 +39,20 @@ type AgentService struct {
 
 // NewAgentService 构造时即创建 Pool；如果 Key 缺失 Pool.Ready() 为 false。
 func NewAgentService(convs repository.ConversationRepository, bots repository.BotRepository) *AgentService {
+	pool := agent.NewPool(agent.LoadConfig())
+	pool.SetCreateBotToolSet(agent.NewCreateBotToolSet(bots))
 	return &AgentService{
 		convs: convs,
 		bots:  bots,
-		pool:  agent.NewPool(agent.LoadConfig()),
+		pool:  pool,
 	}
 }
 
 // IsReady 暴露给前端判断是否启用 AI 能力。
 func (s *AgentService) IsReady() bool { return s.pool.Ready() }
+
+// InvalidatePool 使指定 bot 的 Agent 缓存失效（实现 AgentPoolInvalidator）。
+func (s *AgentService) InvalidatePool(botID string) { s.pool.Invalidate(botID) }
 
 // SendTextToBot 用户在机器人单聊会话里发送消息：
 // - 从 conversation 里取绑定的 botID

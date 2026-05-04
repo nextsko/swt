@@ -21,17 +21,17 @@ export function MentionPanel({
 }) {
     if (candidates.length === 0) {
         return (
-            <div className="px-4 py-3 text-[13px] text-[#8E8E93] bg-white border-t border-[#E5E5EA]">
+            <div className="px-4 py-3 text-[13px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] border-t border-[var(--border)]">
                 无匹配成员
             </div>
         )
     }
     return (
-        <div className="max-h-[44vh] overflow-y-auto bg-white border-t border-[#E5E5EA]">
+        <div className="max-h-[44vh] overflow-y-auto bg-[var(--bg-secondary)] border-t border-[var(--border)]">
             {candidates.map((c) => (
                 <button
                     key={c.id}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 active:bg-[#F2F2F7]"
+                    className="w-full flex items-center gap-3 px-4 py-2.5 active:bg-[var(--bg-input)]"
                     onClick={() => onPick(c)}
                 >
                     <Avatar src={c.avatar} name={c.name} size={32} />

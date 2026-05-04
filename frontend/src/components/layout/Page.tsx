@@ -23,7 +23,7 @@ export function Page({
   contentClassName?: string
 }) {
   return (
-    <div className={cn('absolute inset-0 flex flex-col bg-[#F2F2F7]', className)}>
+    <div className={cn('absolute inset-0 flex flex-col bg-[var(--bg-primary)]', className)}>
       {header ? <div className="flex-none">{header}</div> : null}
       <div
         className={cn(

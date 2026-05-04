@@ -386,6 +386,46 @@ func (s *MockStore) MarkConversationRead(conversationID string) error {
 	return nil
 }
 
+func (s *MockStore) SetConversationPinned(conversationID string, pinned bool) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for i, c := range s.conversations {
+		if c.ID == conversationID {
+			s.conversations[i].Pinned = pinned
+			s.markDirty()
+			return nil
+		}
+	}
+	return fmt.Errorf("conversation not found: %s", conversationID)
+}
+
+func (s *MockStore) SetConversationMute(conversationID string, mute bool) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for i, c := range s.conversations {
+		if c.ID == conversationID {
+			s.conversations[i].MuteNotice = mute
+			s.markDirty()
+			return nil
+		}
+	}
+	return fmt.Errorf("conversation not found: %s", conversationID)
+}
+
+func (s *MockStore) DeleteConversation(conversationID string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for i, c := range s.conversations {
+		if c.ID == conversationID {
+			s.conversations = append(s.conversations[:i], s.conversations[i+1:]...)
+			delete(s.messages, conversationID)
+			s.markDirty()
+			return nil
+		}
+	}
+	return fmt.Errorf("conversation not found: %s", conversationID)
+}
+
 func (s *MockStore) CreateGroup(title string, ownerID string, memberIDs []string) (*domain.Conversation, error) {
 	if len(memberIDs) == 0 {
 		return nil, fmt.Errorf("group requires at least one member besides owner")
@@ -596,6 +636,32 @@ func (s *MockStore) SetInstalled(id string, installed bool) error {
 		}
 	}
 	return fmt.Errorf("bot not found: %s", id)
+}
+
+func (s *MockStore) SetToolIds(id string, toolIds []string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for i, b := range s.bots {
+		if b.ID == id {
+			s.bots[i].ToolIds = toolIds
+			s.markDirty()
+			return nil
+		}
+	}
+	return fmt.Errorf("bot not found: %s", id)
+}
+
+func (s *MockStore) AddBot(bot domain.Bot) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for _, b := range s.bots {
+		if b.ID == bot.ID {
+			return fmt.Errorf("bot already exists: %s", bot.ID)
+		}
+	}
+	s.bots = append(s.bots, bot)
+	s.markDirty()
+	return nil
 }
 
 // ---- DiscoverRepository ----

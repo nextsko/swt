@@ -24,7 +24,7 @@ export function PageHeader({
     return (
         <header
             className={cn(
-                'flex items-center justify-between px-5 pb-3 bg-[#2196F3] text-white shadow-sm',
+                'flex items-center justify-between px-5 pb-3 bg-[var(--header-bg)] text-[var(--header-text)] shadow-sm',
                 className,
             )}
             style={{
@@ -38,11 +38,11 @@ export function PageHeader({
             <div className="flex items-center gap-5 flex-none">
                 {right ?? (
                     <>
-                        <button className="text-white/95 active:opacity-70" onClick={onSearch}>
+                        <button className="text-[var(--header-text)]/95 active:opacity-70" onClick={onSearch}>
                             <Search className="w-6 h-6" strokeWidth={2.2} />
                         </button>
                         <button
-                            className="flex items-center justify-center w-7 h-7 rounded-full border-2 border-white/95 active:opacity-70"
+                            className="flex items-center justify-center w-7 h-7 rounded-full border-2 border-[var(--header-text)]/95 active:opacity-70"
                             onClick={onAdd}
                         >
                             <Plus className="w-4 h-4" strokeWidth={3} />

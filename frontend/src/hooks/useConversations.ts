@@ -27,6 +27,12 @@ export function useConversations() {
         refresh()
     }, [refresh])
 
+    useEffect(() => {
+        return chatService.onConversationChange(() => {
+            void refresh()
+        })
+    }, [refresh])
+
     return { conversations, loading, error, refresh }
 }
 
@@ -97,7 +103,10 @@ export function useChat(conversationId: string | undefined) {
                 next[idx] = msg
                 return next
             })
-            if (chunk.done) setStreaming(false)
+            if (chunk.done) {
+                setStreaming(false)
+                chatService.notifyConversationChange()
+            }
         })
         return off
     }, [conversationId])
@@ -123,15 +132,27 @@ export function useChat(conversationId: string | undefined) {
             if (conv?.type === 'bot') {
                 const msgs = await agentService.sendToBot(conversationId, text)
                 if (msgs && msgs.length > 0) {
-                    setMessages((prev) => [...prev, ...msgs])
+                    setMessages((prev) => {
+                        // 去重：防止后端事件与 sendToBot 返回重复
+                        const existingIds = new Set(prev.map((m) => m.id))
+                        const unique = msgs.filter((m) => !existingIds.has(m.id))
+                        return [...prev, ...unique]
+                    })
                     setStreaming(true)
+                    chatService.notifyConversationChange()
                 }
                 return
             }
 
             // 2) 任何会话：先把文本消息入库（带 mentions）
             const msg = await chatService.sendText(conversationId, text, mentions)
-            if (msg) setMessages((prev) => [...prev, msg])
+            if (msg) {
+                setMessages((prev) => {
+                    const existingIds = new Set(prev.map((m) => m.id))
+                    if (existingIds.has(msg.id)) return prev
+                    return [...prev, msg]
+                })
+            }
 
             // 3) 群聊中 @ 了 bot，触发 bot 流式回复
             if (
@@ -147,8 +168,13 @@ export function useChat(conversationId: string | undefined) {
                     mentionedBots,
                 )
                 if (placeholders.length > 0) {
-                    setMessages((prev) => [...prev, ...placeholders])
+                    setMessages((prev) => {
+                        const existingIds = new Set(prev.map((m) => m.id))
+                        const unique = placeholders.filter((m) => !existingIds.has(m.id))
+                        return [...prev, ...unique]
+                    })
                     setStreaming(true)
+                    chatService.notifyConversationChange()
                 }
             }
         },
@@ -159,7 +185,9 @@ export function useChat(conversationId: string | undefined) {
         async (mediaUrl: string) => {
             if (!conversationId) return
             const msg = await chatService.sendImage(conversationId, mediaUrl)
-            if (msg) setMessages((prev) => [...prev, msg])
+            if (msg) {
+                setMessages((prev) => [...prev, msg])
+            }
         },
         [conversationId],
     )
@@ -168,7 +196,9 @@ export function useChat(conversationId: string | undefined) {
         async (durationSec: number) => {
             if (!conversationId) return
             const msg = await chatService.sendVoice(conversationId, durationSec)
-            if (msg) setMessages((prev) => [...prev, msg])
+            if (msg) {
+                setMessages((prev) => [...prev, msg])
+            }
         },
         [conversationId],
     )
@@ -177,7 +207,9 @@ export function useChat(conversationId: string | undefined) {
         async (fileName: string, mediaUrl: string) => {
             if (!conversationId) return
             const msg = await chatService.sendFile(conversationId, fileName, mediaUrl)
-            if (msg) setMessages((prev) => [...prev, msg])
+            if (msg) {
+                setMessages((prev) => [...prev, msg])
+            }
         },
         [conversationId],
     )
@@ -186,7 +218,9 @@ export function useChat(conversationId: string | undefined) {
         async (title: string) => {
             if (!conversationId) return
             const msg = await chatService.sendLocation(conversationId, title)
-            if (msg) setMessages((prev) => [...prev, msg])
+            if (msg) {
+                setMessages((prev) => [...prev, msg])
+            }
         },
         [conversationId],
     )

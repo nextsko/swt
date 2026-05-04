@@ -1,9 +1,11 @@
 import { BellOff } from 'lucide-react'
+import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { formatConversationTime } from '../../lib/time'
 import type { Conversation } from '../../types'
 import { Avatar, GroupAvatar } from '../common/Avatar'
 import { Badge } from '../common/Badge'
+import { useLongPress } from './BubbleMenu'
 
 /**
  * 会话列表项
@@ -11,8 +13,22 @@ import { Badge } from '../common/Badge'
  * - bot 显示「机器人」标签
  * - 草稿优先替换 lastMessage
  */
-export function ConversationItem({ conversation }: { conversation: Conversation }) {
+export function ConversationItem({
+    conversation,
+    onOpenMenu,
+}: {
+    conversation: Conversation
+    onOpenMenu?: (conversation: Conversation, rect: DOMRect) => void
+}) {
     const navigate = useNavigate()
+    const suppressClickRef = useRef(false)
+    const longPressBinders = useLongPress((rect) => {
+        suppressClickRef.current = true
+        if (onOpenMenu) onOpenMenu(conversation, rect)
+        window.setTimeout(() => {
+            suppressClickRef.current = false
+        }, 250)
+    })
 
     const renderAvatar = () => {
         if (conversation.type === 'group' && conversation.memberAvatars?.length) {
@@ -25,8 +41,12 @@ export function ConversationItem({ conversation }: { conversation: Conversation 
 
     return (
         <div
-            className="flex items-center gap-3 pl-4 bg-white active:bg-[#F2F2F7] cursor-pointer"
-            onClick={() => navigate(`/chat/${conversation.id}`)}
+            className="flex items-center gap-3 pl-4 bg-[var(--bg-secondary)] active:bg-[var(--bg-input)] cursor-pointer"
+            onClick={() => {
+                if (suppressClickRef.current) return
+                navigate(`/chat/${conversation.id}`)
+            }}
+            {...longPressBinders}
         >
             <div className="relative flex-none py-3">
                 {renderAvatar()}
@@ -36,10 +56,10 @@ export function ConversationItem({ conversation }: { conversation: Conversation 
                     </div>
                 )}
             </div>
-            <div className="flex-1 min-w-0 flex items-center gap-3 py-3 pr-4 border-b border-[#E5E5EA]">
+            <div className="flex-1 min-w-0 flex items-center gap-3 py-3 pr-4 border-b border-[var(--border)]">
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="text-[16px] text-[#08060d] font-medium leading-tight truncate">
+                        <span className="text-[16px] text-[var(--text-primary)] font-medium leading-tight truncate">
                             {conversation.title}
                         </span>
                         {conversation.type === 'bot' && (
@@ -51,19 +71,19 @@ export function ConversationItem({ conversation }: { conversation: Conversation 
                     <div className="text-[13px] mt-1.5 leading-tight truncate">
                         {hasDraft ? (
                             <>
-                                <span className="text-[#FF3B30] mr-1">[草稿]</span>
-                                <span className="text-[#8E8E93]">{conversation.draft}</span>
+                                <span className="text-[var(--danger)] mr-1">[草稿]</span>
+                                <span className="text-[var(--text-tertiary)]">{conversation.draft}</span>
                             </>
                         ) : (
-                            <span className="text-[#8E8E93]">{conversation.lastMessage}</span>
+                            <span className="text-[var(--text-tertiary)]">{conversation.lastMessage}</span>
                         )}
                     </div>
                 </div>
                 <div className="flex flex-col items-end gap-1.5 flex-none">
-                    <span className="text-[11px] text-[#8E8E93] leading-none">
+                    <span className="text-[11px] text-[var(--text-tertiary)] leading-none">
                         {formatConversationTime(conversation.lastTime)}
                     </span>
-                    {conversation.muteNotice && <BellOff className="w-3.5 h-3.5 text-[#C7C7CC]" />}
+                    {conversation.muteNotice && <BellOff className="w-3.5 h-3.5 text-[var(--text-quaternary)]" />}
                 </div>
             </div>
         </div>

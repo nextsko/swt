@@ -469,6 +469,18 @@ func newWindowsEvents() windowsEvents {
 	}
 }
 
+var Android = newAndroidEvents()
+
+type androidEvents struct {
+	ActivityCreated ApplicationEventType
+}
+
+func newAndroidEvents() androidEvents {
+	return androidEvents{
+		ActivityCreated: 1259,
+	}
+}
+
 var iOS = newIOSEvents()
 
 type iosEvents struct {
@@ -523,27 +535,11 @@ func newIOSEvents() iosEvents {
 	}
 }
 
-// ---- Android platform events ----
-// Patched to fix vendored upstream missing Android platform events.
-// Keep in sync with vendor/.../application/events_common_android.go which refers to events.Android.
-var Android = newAndroidEvents()
-
-type androidEvents struct {
-	ActivityCreated ApplicationEventType
-}
-
-func newAndroidEvents() androidEvents {
-	return androidEvents{
-		ActivityCreated: 1259,
-	}
-}
-
 func JSEvent(event uint) string {
 	return eventToJS[event]
 }
 
 var eventToJS = map[uint]string{
-	1259: "android:ActivityCreated",
 	1024: "common:ApplicationOpenedWithFile",
 	1025: "common:ApplicationStarted",
 	1026: "common:ApplicationLaunchedWithUrl",
@@ -779,4 +775,5 @@ var eventToJS = map[uint]string{
 	1256: "ios:WebViewDidFinishNavigation",
 	1257: "ios:WebViewDidFailNavigation",
 	1258: "ios:WebViewDecidePolicyForNavigationAction",
+	1259: "android:ActivityCreated",
 }

@@ -41,17 +41,17 @@ export function AttachmentPanel({
     onPick: (kind: AttachmentKind) => void
 }) {
     return (
-        <div className="grid grid-cols-4 gap-4 px-5 py-4 bg-[#F7F7FA] border-t border-[#E5E5EA]">
+        <div className="grid grid-cols-4 gap-4 px-5 py-4 bg-[var(--bg-tertiary)] border-t border-[var(--border)]">
             {items.map((it) => (
                 <button
                     key={it.key}
                     className="flex flex-col items-center gap-1.5 active:opacity-70 transition-opacity"
                     onClick={() => onPick(it.key)}
                 >
-                    <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center shadow-sm">
                         <it.icon className={`w-6 h-6 ${it.color}`} strokeWidth={1.8} />
                     </div>
-                    <span className="text-[11px] text-[#3C3C43]">{it.label}</span>
+                    <span className="text-[11px] text-[var(--text-secondary)]">{it.label}</span>
                 </button>
             ))}
         </div>

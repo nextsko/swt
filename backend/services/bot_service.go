@@ -12,6 +12,12 @@ type BotService struct {
 	bots  repository.BotRepository
 	convs repository.ConversationRepository
 	self  repository.ProfileRepository
+	pool  AgentPoolInvalidator
+}
+
+// AgentPoolInvalidator 使指定 bot 的 Agent 缓存失效（由 AgentService 实现）。
+type AgentPoolInvalidator interface {
+	InvalidatePool(botID string)
 }
 
 func NewBotService(
@@ -20,6 +26,11 @@ func NewBotService(
 	self repository.ProfileRepository,
 ) *BotService {
 	return &BotService{bots: bots, convs: convs, self: self}
+}
+
+// SetPoolInvalidator 注入 AgentService 的 Pool，使工具配置变更后 Agent 重建。
+func (s *BotService) SetPoolInvalidator(p AgentPoolInvalidator) {
+	s.pool = p
 }
 
 // ListBots 返回全部机器人（用于机器人市场）。
@@ -53,4 +64,15 @@ func (s *BotService) InstallBot(id string) (*domain.Conversation, error) {
 // UninstallBot 从联系人/会话中移除机器人（会话本身不删，只标记 bot 未安装；重新安装时会复用）。
 func (s *BotService) UninstallBot(id string) error {
 	return s.bots.SetInstalled(id, false)
+}
+
+// SetToolIds 配置机器人可用工具。空列表 = 全部工具。
+func (s *BotService) SetToolIds(id string, toolIds []string) error {
+	if err := s.bots.SetToolIds(id, toolIds); err != nil {
+		return err
+	}
+	if s.pool != nil {
+		s.pool.InvalidatePool(id)
+	}
+	return nil
 }

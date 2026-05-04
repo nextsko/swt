@@ -560,7 +560,7 @@ func serveAssetForAndroid(app *App, path string) ([]byte, error) {
 	fullURL := "https://wails.localhost" + path
 	androidLogf("debug", "🤖 [serveAssetForAndroid] Creating request for: %s", fullURL)
 
-	req, err := http.NewRequest("GET", fullURL, http.NoBody)
+	req, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -622,36 +622,14 @@ func serveAssetForAndroid(app *App, path string) ([]byte, error) {
 }
 
 func handleMessageForAndroid(app *App, message string) string {
-	androidLogf("debug", "🤖 handleMessageForAndroid: %q", message)
-
-	// If the raw message is a "wails:..." control message, route it directly
-	// to the window's HandleMessage. This mirrors desktop behavior where the
-	// WebView's message handler calls window.HandleMessage. Without this,
-	// "wails:runtime:ready" is never observed by Go → runtimeLoaded stays false
-	// → all ExecJS calls queue forever → emitted events never reach the JS runtime.
-	if len(message) > 6 && message[:6] == "wails:" {
-		app.windowsLock.RLock()
-		var target Window
-		for _, w := range app.windows {
-			target = w
-			break
-		}
-		app.windowsLock.RUnlock()
-		if target != nil {
-			androidLogf("debug", "🤖 dispatching wails control msg to window.HandleMessage")
-			target.HandleMessage(message)
-		} else {
-			androidLogf("warn", "🤖 no window available to handle wails message")
-		}
-		return `{"success":true}`
-	}
-
-	// Fallback: try to parse as JSON for future routing.
+	// Parse the message
 	var msg map[string]interface{}
 	if err := json.Unmarshal([]byte(message), &msg); err != nil {
-		androidLogf("warn", "🤖 handleMessageForAndroid: not JSON and not wails control: %v", err)
 		return fmt.Sprintf(`{"error":"%s"}`, err.Error())
 	}
+
+	// TODO: Route to appropriate handler based on message type
+	// For now, return success
 	return `{"success":true}`
 }
 

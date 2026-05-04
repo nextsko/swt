@@ -1,12 +1,20 @@
-import { ArrowLeft, Check, Plus } from 'lucide-react'
+import { ArrowLeft, Check, Plus, Wrench } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Avatar } from '../../components/common/Avatar'
 import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
 import { useBots } from '../../hooks/useBots'
+import { getBotConversationId } from '../../lib/botConversation'
 import { cn } from '../../lib/cn'
 import type { Bot } from '../../types'
+
+/** 可用工具清单（与后端 agent.go 中 allToolSets 对齐） */
+const AVAILABLE_TOOLS = [
+    { id: 'file', label: '文件', desc: '读写文件' },
+    { id: 'bash', label: '终端', desc: '执行命令' },
+    { id: 'fetch-mcp', label: '搜索', desc: '网络搜索' },
+] as const
 
 /**
  * 机器人市场：展示全部 persona 卡片。
@@ -29,7 +37,7 @@ export function BotMarketPage() {
     }
 
     const onOpenChat = (bot: Bot) => {
-        navigate(`/chat/c_bot_${bot.id}`)
+        navigate(`/chat/${getBotConversationId(bot.id)}`)
     }
 
     return (
@@ -52,13 +60,14 @@ export function BotMarketPage() {
             contentClassName="pb-8"
         >
             {loading ? (
-                <div className="p-6 text-center text-[#8E8E93] text-sm">加载中…</div>
+                <div className="p-6 text-center text-[var(--text-tertiary)] text-sm">加载中…</div>
             ) : (
                 <div className="px-4 pt-4 grid grid-cols-1 gap-3">
                     {bots.map((bot) => (
                         <div
                             key={bot.id}
-                            className="bg-white rounded-2xl shadow-sm p-4 flex items-start gap-3"
+                            className="bg-[var(--bg-secondary)] rounded-2xl shadow-sm p-4 flex items-start gap-3 cursor-pointer active:opacity-90"
+                            onClick={() => navigate(`/bots/${bot.id}`)}
                         >
                             <div
                                 className={cn(
@@ -70,28 +79,48 @@ export function BotMarketPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-[16px] font-semibold text-[#08060d]">
+                                    <span className="text-[16px] font-semibold text-[var(--text-primary)]">
                                         {bot.name}
                                     </span>
                                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
                                         MiniMax 派生
                                     </span>
                                 </div>
-                                <div className="text-[13px] text-[#3C3C43] mt-1 leading-snug">
+                                <div className="text-[13px] text-[var(--text-secondary)] mt-1 leading-snug">
                                     {bot.persona}
                                 </div>
-                                <div className="text-[11px] text-[#8E8E93] mt-1">
+                                <div className="text-[11px] text-[var(--text-tertiary)] mt-1">
                                     温度 {bot.temperature} · 最多 {bot.maxTokens} tokens
+                                </div>
+                                <div className="flex flex-wrap gap-1 mt-1.5">
+                                    <Wrench className="w-3 h-3 text-[var(--text-tertiary)] mt-0.5" />
+                                    {(bot.toolIds && bot.toolIds.length > 0
+                                        ? bot.toolIds
+                                        : AVAILABLE_TOOLS.map((t) => t.id)
+                                    ).map((tid) => {
+                                        const info = AVAILABLE_TOOLS.find((t) => t.id === tid)
+                                        return (
+                                            <span
+                                                key={tid}
+                                                className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-input)] text-[var(--text-secondary)]"
+                                            >
+                                                {info?.label ?? tid}
+                                            </span>
+                                        )
+                                    })}
                                 </div>
                             </div>
                             <button
                                 className={cn(
                                     'shrink-0 px-3 h-8 rounded-full flex items-center gap-1 text-[13px] font-medium',
                                     bot.installed
-                                        ? 'bg-[#E5E5EA] text-[#3C3C43]'
-                                        : 'bg-[#2196F3] text-white',
+                                        ? 'bg-[var(--bg-input)] text-[var(--text-secondary)]'
+                                        : 'bg-[var(--accent)] text-white',
                                 )}
-                                onClick={() => (bot.installed ? onOpenChat(bot) : onInstall(bot))}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    void (bot.installed ? onOpenChat(bot) : onInstall(bot))
+                                }}
                                 disabled={installing === bot.id}
                             >
                                 {bot.installed ? (

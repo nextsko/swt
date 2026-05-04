@@ -3,14 +3,42 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PopMenu } from '../../components/common/PopMenu'
 import { ConversationItem } from '../../components/conversation/ConversationItem'
+import { ConversationMenu, type ConversationMenuAction } from '../../components/conversation/ConversationMenu'
 import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
 import { useConversations } from '../../hooks/useConversations'
+import { chatService } from '../../services'
+import type { Conversation } from '../../types'
 
 export function ConversationListPage() {
-    const { conversations, loading } = useConversations()
+    const { conversations, loading, refresh } = useConversations()
     const navigate = useNavigate()
     const [menuOpen, setMenuOpen] = useState(false)
+    const [actionConv, setActionConv] = useState<Conversation | null>(null)
+    const [actionRect, setActionRect] = useState<DOMRect | null>(null)
+
+    const openConversationMenu = (conversation: Conversation, rect: DOMRect) => {
+        setActionConv(conversation)
+        setActionRect(rect)
+    }
+
+    const closeConversationMenu = () => {
+        setActionConv(null)
+        setActionRect(null)
+    }
+
+    const handleConversationAction = async (action: ConversationMenuAction) => {
+        if (!actionConv) return
+        if (action === 'toggle-pin') {
+            await chatService.setPinned(actionConv.id, !actionConv.pinned)
+        } else if (action === 'toggle-mute') {
+            await chatService.setMute(actionConv.id, !actionConv.muteNotice)
+        } else if (action === 'delete') {
+            await chatService.deleteConversation(actionConv.id)
+        }
+        await refresh()
+        closeConversationMenu()
+    }
 
     return (
         <div className="relative h-full">
@@ -24,13 +52,17 @@ export function ConversationListPage() {
                 }
             >
                 {loading ? (
-                    <div className="p-6 text-center text-[#8E8E93] text-sm">加载中…</div>
+                    <div className="p-6 text-center text-[var(--text-tertiary)] text-sm">加载中…</div>
                 ) : conversations.length === 0 ? (
-                    <div className="p-10 text-center text-[#8E8E93] text-sm">暂无消息</div>
+                    <div className="p-10 text-center text-[var(--text-tertiary)] text-sm">暂无消息</div>
                 ) : (
                     <div>
                         {conversations.map((c) => (
-                            <ConversationItem key={c.id} conversation={c} />
+                            <ConversationItem
+                                key={c.id}
+                                conversation={c}
+                                onOpenMenu={openConversationMenu}
+                            />
                         ))}
                     </div>
                 )}
@@ -64,6 +96,14 @@ export function ConversationListPage() {
                         onClick: () => console.info('scan'),
                     },
                 ]}
+            />
+            <ConversationMenu
+                open={Boolean(actionConv && actionRect)}
+                anchorRect={actionRect}
+                pinned={Boolean(actionConv?.pinned)}
+                muted={Boolean(actionConv?.muteNotice)}
+                onAction={handleConversationAction}
+                onClose={closeConversationMenu}
             />
         </div>
     )

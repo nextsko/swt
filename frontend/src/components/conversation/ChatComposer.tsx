@@ -75,8 +75,9 @@ export function ChatComposer({
     latestRef.current.value = value
     latestRef.current.save = onDraftChange
     useEffect(() => {
+        const latest = latestRef
         return () => {
-            latestRef.current.save?.(latestRef.current.value)
+            latest.current.save?.(latest.current.value)
         }
     }, [])
 
@@ -206,14 +207,26 @@ export function ChatComposer({
         setValue((v) => Array.from(v).slice(0, -1).join(''))
     }, [])
 
+    // 发送防抖
+    const sendingRef = useRef(false)
+    const debouncedSend = useCallback(async () => {
+        if (sendingRef.current) return
+        sendingRef.current = true
+        try {
+            await handleSend()
+        } finally {
+            setTimeout(() => { sendingRef.current = false }, 500)
+        }
+    }, [handleSend])
+
     return (
         <div
-            className="flex-none bg-white border-t border-[#E5E5EA]"
+            className="flex-none bg-[var(--composer-bg)] border-t border-[var(--composer-border)]"
             style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px))' }}
         >
             <div className="flex items-end gap-2 px-3 py-2">
                 <button
-                    className="p-1.5 text-[#8E8E93] shrink-0"
+                    className="p-1.5 text-[var(--text-tertiary)] shrink-0"
                     aria-label="voice-toggle"
                     onClick={() => setMode((m) => (m === 'voice' ? 'text' : 'voice'))}
                 >
@@ -226,7 +239,7 @@ export function ChatComposer({
 
                 {mode === 'voice' ? (
                     <button
-                        className="flex-1 h-9 rounded-md border border-[#C7C7CC] bg-[#F8F8F9] text-[14px] text-[#3C3C43] active:bg-[#E5E5EA] select-none"
+                        className="flex-1 h-9 rounded-md border border-[var(--border)] bg-[var(--bg-tertiary)] text-[14px] text-[var(--text-secondary)] active:bg-[var(--bg-input)] select-none"
                         onMouseDown={onVoicePressStart}
                         onMouseUp={onVoicePressEnd}
                         onMouseLeave={onVoicePressEnd}
@@ -243,14 +256,14 @@ export function ChatComposer({
                         onKeyDown={onKeyDown}
                         placeholder="输入消息…"
                         rows={1}
-                        className="flex-1 min-w-0 resize-none leading-[22px] max-h-[110px] px-3 py-1.5 bg-[#F2F2F7] rounded-2xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[#2196F3]/30"
+                        className="flex-1 min-w-0 resize-none leading-[22px] max-h-[110px] px-3 py-1.5 bg-[var(--composer-input-bg)] rounded-2xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/30"
                     />
                 )}
 
                 <button
                     className={cn(
                         'p-1.5 shrink-0',
-                        panel === 'emoji' ? 'text-[#2196F3]' : 'text-[#8E8E93]',
+                        panel === 'emoji' ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]',
                     )}
                     aria-label="emoji"
                     onClick={() => togglePanel('emoji')}
@@ -260,8 +273,8 @@ export function ChatComposer({
 
                 {value.trim() && mode === 'text' ? (
                     <button
-                        className="h-9 px-3 rounded-full text-white bg-[#2196F3] text-[14px] shrink-0"
-                        onClick={handleSend}
+                        className="h-9 px-3 rounded-full text-white bg-[var(--accent)] text-[14px] shrink-0 active:scale-95 transition-transform"
+                        onClick={debouncedSend}
                     >
                         发送
                     </button>
@@ -269,7 +282,7 @@ export function ChatComposer({
                     <button
                         className={cn(
                             'p-1.5 shrink-0 transition-transform',
-                            panel === 'attachment' ? 'rotate-45 text-[#2196F3]' : 'text-[#8E8E93]',
+                            panel === 'attachment' ? 'rotate-45 text-[var(--accent)]' : 'text-[var(--text-tertiary)]',
                         )}
                         aria-label="attachment"
                         onClick={() => togglePanel('attachment')}
