@@ -79,10 +79,13 @@ export function useChat(conversationId: string | undefined) {
         loadAll()
     }, [loadAll])
 
-    // 进入会话即 markRead，清零未读
+    // markRead 防抖：切换对话后 500ms 再标记已读，防止快速切换频繁调用
     useEffect(() => {
         if (!conversationId) return
-        void chatService.markRead(conversationId)
+        const timer = setTimeout(() => {
+            void chatService.markRead(conversationId)
+        }, 500)
+        return () => clearTimeout(timer)
     }, [conversationId])
 
     // 订阅流式增量：只处理当前会话
