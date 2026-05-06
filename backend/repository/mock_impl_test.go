@@ -8,6 +8,7 @@ import (
 
 func TestNewMockStore_SeedData(t *testing.T) {
 	s := NewMockStore()
+	t.Cleanup(s.Close)
 	convs, err := s.ListConversations()
 	if err != nil {
 		t.Fatalf("ListConversations() error: %v", err)
@@ -35,6 +36,7 @@ func TestNewMockStore_SeedData(t *testing.T) {
 
 func TestMockStore_AppendAndListMessages(t *testing.T) {
 	s := NewMockStore()
+	t.Cleanup(s.Close)
 	convID := "c_test_conv"
 
 	// 先创建一个会话
@@ -81,6 +83,7 @@ func TestMockStore_AppendAndListMessages(t *testing.T) {
 
 func TestMockStore_UpdateMessageStatus(t *testing.T) {
 	s := NewMockStore()
+	t.Cleanup(s.Close)
 	convID := "c_test_status"
 
 	// 先创建一个会话和一条自己的消息

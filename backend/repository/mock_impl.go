@@ -79,6 +79,11 @@ func (s *MockStore) markDirty() {
 	}
 }
 
+// Close 关闭持久化 goroutine，释放资源。
+func (s *MockStore) Close() {
+	close(s.dirty)
+}
+
 // persistLoop 消费 dirty 信号并保存到磁盘
 func (s *MockStore) persistLoop() {
 	for range s.dirty {
