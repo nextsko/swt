@@ -23,7 +23,9 @@ export function ContactDetailPage() {
             ])
             setContact(c)
             const matched = conversations.find(
-                (item) => item.type === 'single' && item.memberIds?.includes(id),
+                (item) =>
+                    (item.type === 'single' && item.title === contact?.name) ||
+                    (item.type === 'single' && item.memberIds?.includes(id ?? '')),
             )
             setConversation(matched ?? null)
             setLoading(false)
