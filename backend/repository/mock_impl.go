@@ -124,23 +124,49 @@ func (s *MockStore) loadFromDisk() {
 	if err := json.Unmarshal(b, &state); err != nil {
 		return
 	}
+
+	// Conversations：合并（落盘覆盖同 ID 的种子）
 	if len(state.Conversations) > 0 {
-		s.conversations = state.Conversations
+		byID := map[string]domain.Conversation{}
+		for _, c := range s.conversations {
+			byID[c.ID] = c
+		}
+		for _, c := range state.Conversations {
+			byID[c.ID] = c
+		}
+		s.conversations = make([]domain.Conversation, 0, len(byID))
+		for _, c := range byID {
+			s.conversations = append(s.conversations, c)
+		}
 	}
+
+	// Messages：合并（落盘覆盖同会话 ID 的种子）
 	if len(state.Messages) > 0 {
-		s.messages = state.Messages
+		for cid, msgs := range state.Messages {
+			s.messages[cid] = msgs
+		}
 	}
+
+	// Bots：合并 + 保留动态创建的 bot
 	if len(state.Bots) > 0 {
-		// 按 ID 合并：落盘里已记录的安装状态覆盖种子；种子里有但落盘里没的新机器人仍出现
 		byID := map[string]domain.Bot{}
-		for _, b := range state.Bots {
+		for _, b := range s.bots {
 			byID[b.ID] = b
 		}
-		for i, seed := range s.bots {
-			if saved, ok := byID[seed.ID]; ok {
-				seed.Installed = saved.Installed
-				s.bots[i] = seed
+		for _, b := range state.Bots {
+			if existing, ok := byID[b.ID]; ok {
+				existing.Installed = b.Installed
+				if b.ToolIds != nil {
+					existing.ToolIds = b.ToolIds
+				}
+				byID[b.ID] = existing
+			} else {
+				byID[b.ID] = b
 			}
+		}
+		s.bots = make([]domain.Bot, 0, len(byID))
+		for _, b := range byID {
+			s.bots = append(s.bots, b)
 		}
 	}
 }
