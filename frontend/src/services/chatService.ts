@@ -19,11 +19,21 @@ const localMockMessages: Record<string, Message[]> = Object.fromEntries(
     Object.entries(mockMessages).map(([k, v]) => [k, [...v]]),
 )
 
+const mockTimers = new Set<ReturnType<typeof setTimeout>>()
+
 // mock 状态推进计时器
 function scheduleMockStatus(msg: Message) {
     if (!msg.isSelf) return
-    setTimeout(() => applyMockStatus(msg.id, 'sent'), 150)
-    setTimeout(() => applyMockStatus(msg.id, 'delivered'), 1200)
+    const t1 = setTimeout(() => applyMockStatus(msg.id, 'sent'), 150)
+    const t2 = setTimeout(() => applyMockStatus(msg.id, 'delivered'), 1200)
+    mockTimers.add(t1)
+    mockTimers.add(t2)
+}
+
+// 提供给外部 cleanup
+export function clearMockTimers() {
+    mockTimers.forEach(clearTimeout)
+    mockTimers.clear()
 }
 
 function applyMockStatus(messageID: string, status: MessageStatus) {
@@ -214,8 +224,7 @@ export const chatService = {
                 }
             })
             // mock 也要清 unread
-            const idx = mockConversations.findIndex((c) => c.id === conversationId)
-            if (idx >= 0) mockConversations[idx].unreadCount = 0
+            setConvField(conversationId, 'unreadCount', 0)
             emitConversationChange()
             return
         }
@@ -225,8 +234,7 @@ export const chatService = {
 
     async setPinned(conversationId: string, pinned: boolean): Promise<void> {
         if (shouldUseMock()) {
-            const idx = mockConversations.findIndex((c) => c.id === conversationId)
-            if (idx >= 0) mockConversations[idx].pinned = pinned
+            setConvField(conversationId, 'pinned', pinned)
             emitConversationChange()
             return
         }
@@ -236,8 +244,7 @@ export const chatService = {
 
     async setMute(conversationId: string, mute: boolean): Promise<void> {
         if (shouldUseMock()) {
-            const idx = mockConversations.findIndex((c) => c.id === conversationId)
-            if (idx >= 0) mockConversations[idx].muteNotice = mute
+            setConvField(conversationId, 'muteNotice', mute)
             emitConversationChange()
             return
         }
@@ -294,10 +301,10 @@ export const chatService = {
                     const convIdx = mockConversations.findIndex((c) => c.id === cid)
                     if (convIdx >= 0 && list.length > 0) {
                         const last = list[list.length - 1]
-                        mockConversations[convIdx].lastMessage = last.text ?? ''
-                        mockConversations[convIdx].lastTime = last.timestamp
+                        setConvField(cid, 'lastMessage', getMessagePreview(last))
+                        setConvField(cid, 'lastTime', last.timestamp)
                     } else if (convIdx >= 0) {
-                        mockConversations[convIdx].lastMessage = ''
+                        setConvField(cid, 'lastMessage', '')
                     }
                     emitConversationChange()
                     return
@@ -375,13 +382,23 @@ export const chatService = {
         }
         // Wails 自动生成类型里的 MessageStatus 是 enum，与我们 union 类型不完全兼容，
         // 所以在订阅边界上用 any 手动转换，前端内部继续使用清晰的 union。
-        let unsubscribe = () => { }
-        import('@wailsio/runtime').then((m) => {
-            unsubscribe = m.Events.On('chat:status', (ev: { data?: unknown }) => {
-                handler(ev.data as StatusEvent)
+        let unsub: (() => void) | null = null
+        const cleanup = () => {
+            if (unsub) {
+                unsub()
+                unsub = null
+            }
+        }
+        import('@wailsio/runtime')
+            .then((m) => {
+                unsub = m.Events.On('chat:status', (ev: { data?: unknown }) => {
+                    handler(ev.data as StatusEvent)
+                })
             })
-        })
-        return () => unsubscribe()
+            .catch(() => {
+                // import 失败，静默降级
+            })
+        return cleanup
     },
 }
 
@@ -400,14 +417,25 @@ function mockSelfMsg(conversationId: string, extra: Partial<Message>): Message {
     }
 }
 
+function setConvField<K extends keyof Conversation>(
+    convId: string,
+    field: K,
+    value: Conversation[K],
+): void {
+    const idx = mockConversations.findIndex((c) => c.id === convId)
+    if (idx >= 0) {
+        mockConversations[idx] = { ...mockConversations[idx], [field]: value }
+    }
+}
+
 function syncMockConversation(conversationId: string) {
     const idx = mockConversations.findIndex((c) => c.id === conversationId)
     if (idx < 0) return
     const list = localMockMessages[conversationId] ?? []
     const last = list[list.length - 1]
     if (!last) return
-    mockConversations[idx].lastMessage = getMessagePreview(last)
-    mockConversations[idx].lastTime = last.timestamp
+    setConvField(conversationId, 'lastMessage', getMessagePreview(last))
+    setConvField(conversationId, 'lastTime', last.timestamp)
 }
 
 function getMessagePreview(message: Message): string {
