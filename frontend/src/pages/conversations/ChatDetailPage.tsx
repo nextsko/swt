@@ -98,9 +98,17 @@ export function ChatDetailPage() {
         }
     }, [forwardMsg])
 
+    // 仅在用户位于底部时自动滚动
     useEffect(() => {
-        const sentinel = contentRef.current
-        if (sentinel) sentinel.scrollIntoView({ block: 'end' })
+        const container = contentRef.current?.parentElement
+        if (!container) return
+        const threshold = 150
+        const isNearBottom =
+            container.scrollHeight - container.scrollTop - container.clientHeight < threshold
+        if (isNearBottom) {
+            const sentinel = contentRef.current
+            if (sentinel) sentinel.scrollIntoView({ block: 'end' })
+        }
     }, [messages])
 
     const grouped = groupMessages(messages)
