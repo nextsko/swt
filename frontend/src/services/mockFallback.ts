@@ -11,282 +11,238 @@ import type {
   User,
 } from '../types'
 
-const ava = (seed: string) =>
-  `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`
-const tile = (seed: string, bg: string) =>
-  `https://api.dicebear.com/9.x/shapes/svg?seed=${seed}&backgroundColor=${bg}`
+const avatarMe = 'https://api.dicebear.com/9.x/adventurer/svg?seed=me'
+const avatarBot = 'https://api.dicebear.com/9.x/bottts/svg?seed=bot&backgroundColor=2196F3'
+const avatarDino = 'https://api.dicebear.com/9.x/adventurer/svg?seed=dino'
+const avatarAutumn = 'https://api.dicebear.com/9.x/adventurer/svg?seed=autumn'
+const avatarScene = 'https://api.dicebear.com/9.x/adventurer/svg?seed=scene'
+const avatarRain = 'https://api.dicebear.com/9.x/adventurer/svg?seed=rain'
+const avatarCloud = 'https://api.dicebear.com/9.x/adventurer/svg?seed=cloud'
+const avatarMeet = 'https://api.dicebear.com/9.x/shapes/svg?seed=meeting&backgroundColor=FF9800'
+const avatarPeace = 'https://api.dicebear.com/9.x/adventurer/svg?seed=peace'
 
-const ago = (s: number) => Date.now() - s * 1000
+function ago(seconds: number): number {
+  return Date.now() - seconds * 1000
+}
 
 export const mockUser: User = {
   id: 'u_me',
   name: '零零三03',
-  avatarUrl: ava('me'),
-  wildFireId: 'wfid-b06cb64888564581b5e8e00c042819',
-  bio: '',
+  avatarUrl: avatarMe,
+  wildFireId: 'sw_003',
+  bio: '代码写多了，自然就会了。',
 }
 
 export const mockConversations: Conversation[] = [
   {
-    id: 'c_system',
-    type: 'system',
-    title: '系统管理员',
-    avatarUrl: tile('wildfire', '2196F3'),
-    lastMessage: '系统管理员: 欢迎您的归来，如果使用过程中有什么…',
-    lastTime: ago(60 * 60 * 12),
-    unreadCount: 2,
-    pinned: false,
+    id: 'c_bot',
+    type: 'bot',
+    title: 'AI 助手',
+    avatarUrl: avatarBot,
+    lastMessage: '你好！我是你的 AI 助手，有什么可以帮你的吗？',
+    lastTime: ago(30),
+    unreadCount: 1,
+    pinned: true,
     muteNotice: false,
+    botId: 'bot_general',
   },
   {
-    id: 'c_group2',
-    type: 'group',
-    title: '2',
-    avatarUrl: '',
-    lastMessage: 'Mr Dinosaur02: [视频]',
-    lastTime: ago(60 * 60 * 24 * 40),
-    unreadCount: 0,
-    pinned: false,
-    muteNotice: true,
-    memberAvatars: [ava('dino'), ava('scene'), ava('rain'), ava('autumn')],
-  },
-  {
-    id: 'c_05',
+    id: 'c_dino',
     type: 'single',
-    title: '05',
-    avatarUrl: ava('scene'),
-    lastMessage: '05: [音视频通话]',
-    lastTime: ago(60 * 60 * 2),
+    title: '恐龙',
+    avatarUrl: avatarDino,
+    lastMessage: '周末一起去爬山吧 🏔️',
+    lastTime: ago(7200),
     unreadCount: 0,
     pinned: false,
     muteNotice: false,
-  },
-  {
-    id: 'c_rain',
-    type: 'single',
-    title: '大雨',
-    avatarUrl: tile('wildfire', '2196F3'),
-    lastMessage: '你们已经是好友了，可以开始聊天了。',
-    lastTime: ago(60 * 60 * 24),
-    unreadCount: 0,
-    pinned: false,
-    muteNotice: false,
-  },
-  {
-    id: 'c_group3',
-    type: 'group',
-    title: '秋田01,零零三03,大雨,05',
-    avatarUrl: '',
-    lastMessage: '大雨: 好👍、',
-    lastTime: ago(60 * 60 * 24 * 58),
-    unreadCount: 0,
-    pinned: false,
-    muteNotice: false,
-    memberAvatars: [ava('autumn'), ava('zero'), ava('rain'), tile('wildfire', '2196F3')],
-  },
-  {
-    id: 'c_meeting',
-    type: 'group',
-    title: '会议测试群',
-    avatarUrl: '',
-    lastMessage: '秋田01: [音视频通话]',
-    lastTime: ago(60 * 60 * 24 * 58),
-    unreadCount: 0,
-    pinned: false,
-    muteNotice: false,
-    memberAvatars: [tile('meet', 'FF9800'), tile('wildfire', '2196F3'), ava('zero'), ava('autumn')],
   },
   {
     id: 'c_autumn',
     type: 'single',
-    title: '秋田01',
-    avatarUrl: ava('dog'),
-    lastMessage: '秋田01: 你们已经是好友了，可以开始聊天了。',
-    lastTime: ago(60 * 60 * 24 * 58),
-    unreadCount: 0,
+    title: '秋天',
+    avatarUrl: avatarAutumn,
+    lastMessage: '[图片]',
+    lastTime: ago(28800),
+    unreadCount: 3,
     pinned: false,
     muteNotice: false,
   },
   {
-    id: 'c_group4',
+    id: 'c_meeting',
     type: 'group',
-    title: '零零三03、大雨、安',
-    avatarUrl: '',
-    lastMessage: '大雨: 大雨 邀请 你 秋田01 加入通话',
-    lastTime: ago(60 * 60 * 24 * 60),
-    unreadCount: 0,
+    title: '项目周会群',
+    avatarUrl: avatarMeet,
+    lastMessage: '收到，明天同步进度',
+    lastTime: ago(86400),
+    unreadCount: 5,
     pinned: false,
-    muteNotice: false,
-    memberAvatars: [ava('me'), ava('rain'), ava('peace'), ava('zero')],
+    muteNotice: true,
+    memberAvatars: [avatarDino, avatarScene, avatarRain, avatarAutumn],
+    memberIds: ['u_me', 'u_dino', 'u_scene', 'u_rain', 'u_autumn'],
+    ownerId: 'u_dino',
   },
   {
-    id: 'c_peace',
+    id: 'c_cloud',
     type: 'single',
-    title: '安安',
-    avatarUrl: ava('cat'),
-    lastMessage: '[音视频通话]',
-    lastTime: ago(60 * 60 * 24 * 61),
+    title: '云朵',
+    avatarUrl: avatarCloud,
+    lastMessage: '好的，那先这样～',
+    lastTime: ago(259200),
     unreadCount: 0,
     pinned: false,
     muteNotice: false,
-  },
-  {
-    id: 'c_group5',
-    type: 'group',
-    title: '丰云00,大雨,贾浩1',
-    avatarUrl: '',
-    lastMessage: '秋田01: 我们',
-    lastTime: ago(60 * 60 * 24 * 65),
-    unreadCount: 0,
-    pinned: false,
-    muteNotice: false,
-    memberAvatars: [ava('feng'), ava('rain'), ava('jia'), ava('autumn')],
   },
 ]
 
 export const mockMessages: Record<string, Message[]> = {
-  c_rain: [
+  c_bot: [
     {
-      id: 'm_rain_tip',
-      conversationId: 'c_rain',
-      senderId: '',
-      senderName: '',
-      senderAvatar: '',
-      type: 'tip',
-      text: '你们已经是好友了，可以开始聊天了。',
-      timestamp: ago(60 * 60 * 24),
-      isSelf: false,
-    },
-    {
-      id: 'm_rain_1',
-      conversationId: 'c_rain',
-      senderId: 'u_rain',
-      senderName: '大雨',
-      senderAvatar: tile('wildfire', '2196F3'),
-      type: 'text',
-      text: '你好，很高兴认识你 👋',
-      timestamp: ago(60 * 60 * 20),
-      isSelf: false,
-    },
-    {
-      id: 'm_rain_2',
-      conversationId: 'c_rain',
-      senderId: 'u_me',
-      senderName: '零零三03',
-      senderAvatar: ava('me'),
-      type: 'text',
-      text: '你好~',
-      timestamp: ago(60 * 60 * 19),
-      isSelf: true,
-    },
-    {
-      id: 'm_rain_3',
-      conversationId: 'c_rain',
-      senderId: 'u_rain',
-      senderName: '大雨',
-      senderAvatar: tile('wildfire', '2196F3'),
-      type: 'voice',
-      durationSec: 8,
-      timestamp: ago(60 * 60 * 18),
-      isSelf: false,
+      id: 'm_bot_1', conversationId: 'c_bot',
+      senderId: 'bot_general', senderName: 'AI 助手', senderAvatar: avatarBot,
+      type: 'text', text: '你好！我是你的 AI 助手，有什么可以帮你的吗？',
+      timestamp: ago(120), isSelf: false,
+      status: 'read',
     },
   ],
-  c_group2: [
+  c_dino: [
     {
-      id: 'm_g2_1',
-      conversationId: 'c_group2',
-      senderId: 'u_dino',
-      senderName: 'Mr Dinosaur02',
-      senderAvatar: ava('dino'),
-      type: 'image',
-      mediaUrl: 'https://picsum.photos/seed/dino1/400/600',
-      timestamp: ago(60 * 60 * 24 * 40),
-      isSelf: false,
+      id: 'm_dino_1', conversationId: 'c_dino',
+      senderId: 'u_me', senderName: '零零三03', senderAvatar: avatarMe,
+      type: 'text', text: '在吗？',
+      timestamp: ago(10800), isSelf: true,
+      status: 'read',
     },
     {
-      id: 'm_g2_2',
-      conversationId: 'c_group2',
-      senderId: 'u_dino',
-      senderName: 'Mr Dinosaur02',
-      senderAvatar: ava('dino'),
-      type: 'image',
-      mediaUrl: 'https://picsum.photos/seed/dino2/400/600',
-      timestamp: ago(60 * 60 * 24 * 40 - 30),
-      isSelf: false,
+      id: 'm_dino_2', conversationId: 'c_dino',
+      senderId: 'u_dino', senderName: '恐龙', senderAvatar: avatarDino,
+      type: 'text', text: '在呢，咋了？',
+      timestamp: ago(10770), isSelf: false,
     },
     {
-      id: 'm_g2_3',
-      conversationId: 'c_group2',
-      senderId: 'u_dino',
-      senderName: 'Mr Dinosaur02',
-      senderAvatar: ava('dino'),
-      type: 'video',
-      mediaUrl: 'https://picsum.photos/seed/dino3/400/600',
-      durationSec: 3,
-      timestamp: ago(60 * 60 * 24 * 40 - 60),
-      isSelf: false,
+      id: 'm_dino_3', conversationId: 'c_dino',
+      senderId: 'u_me', senderName: '零零三03', senderAvatar: avatarMe,
+      type: 'text', text: '这周末有空吗？',
+      timestamp: ago(7800), isSelf: true,
+      status: 'read',
+    },
+    {
+      id: 'm_dino_4', conversationId: 'c_dino',
+      senderId: 'u_dino', senderName: '恐龙', senderAvatar: avatarDino,
+      type: 'text', text: '周末一起去爬山吧 🏔️',
+      timestamp: ago(7200), isSelf: false,
     },
   ],
-  c_system: [
+  c_autumn: [
     {
-      id: 'm_sys_1',
-      conversationId: 'c_system',
-      senderId: 'u_system',
-      senderName: '系统管理员',
-      senderAvatar: tile('wildfire', '2196F3'),
-      type: 'text',
-      text: '欢迎您的归来，如果使用过程中有什么问题请随时联系我们。',
-      timestamp: ago(60 * 60 * 24),
-      isSelf: false,
+      id: 'm_aut_1', conversationId: 'c_autumn',
+      senderId: 'u_autumn', senderName: '秋天', senderAvatar: avatarAutumn,
+      type: 'image', mediaUrl: 'https://picsum.photos/seed/autumn1/400/300',
+      timestamp: ago(32400), isSelf: false,
     },
     {
-      id: 'm_sys_2',
-      conversationId: 'c_system',
-      senderId: 'u_me',
-      senderName: '零零三03',
-      senderAvatar: ava('me'),
-      type: 'text',
-      text: '好的，谢谢！',
-      timestamp: ago(60 * 60 * 12),
-      isSelf: true,
+      id: 'm_aut_2', conversationId: 'c_autumn',
+      senderId: 'u_autumn', senderName: '秋天', senderAvatar: avatarAutumn,
+      type: 'text', text: '看这个风景如何？',
+      timestamp: ago(32390), isSelf: false,
+    },
+    {
+      id: 'm_aut_3', conversationId: 'c_autumn',
+      senderId: 'u_me', senderName: '零零三03', senderAvatar: avatarMe,
+      type: 'text', text: '哇，这是哪里？',
+      timestamp: ago(29100), isSelf: true,
+      status: 'read',
+    },
+    {
+      id: 'm_aut_4', conversationId: 'c_autumn',
+      senderId: 'u_autumn', senderName: '秋天', senderAvatar: avatarAutumn,
+      type: 'voice', durationSec: 12,
+      timestamp: ago(28800), isSelf: false,
+    },
+  ],
+  c_meeting: [
+    {
+      id: 'm_meet_1', conversationId: 'c_meeting',
+      senderId: 'u_dino', senderName: '恐龙', senderAvatar: avatarDino,
+      type: 'text', text: '周会提醒：明天下午 2 点同步进度',
+      timestamp: ago(93600), isSelf: false,
+    },
+    {
+      id: 'm_meet_2', conversationId: 'c_meeting',
+      senderId: 'u_scene', senderName: '景色', senderAvatar: avatarScene,
+      type: 'text', text: '好的',
+      timestamp: ago(93480), isSelf: false,
+    },
+    {
+      id: 'm_meet_3', conversationId: 'c_meeting',
+      senderId: 'u_rain', senderName: '雨天', senderAvatar: avatarRain,
+      type: 'file', text: '进度报告 Q2.pdf', fileName: '进度报告 Q2.pdf',
+      mediaUrl: 'https://picsum.photos/seed/pdf/100/100',
+      timestamp: ago(90000), isSelf: false,
+    },
+    {
+      id: 'm_meet_4', conversationId: 'c_meeting',
+      senderId: 'u_me', senderName: '零零三03', senderAvatar: avatarMe,
+      type: 'text', text: '收到，明天同步进度',
+      timestamp: ago(86400), isSelf: true,
+      status: 'delivered',
+    },
+  ],
+  c_cloud: [
+    {
+      id: 'm_cloud_1', conversationId: 'c_cloud',
+      senderId: 'u_cloud', senderName: '云朵', senderAvatar: avatarCloud,
+      type: 'redpacket', text: '新年快乐 🧧',
+      timestamp: ago(345600), isSelf: false,
+    },
+    {
+      id: 'm_cloud_2', conversationId: 'c_cloud',
+      senderId: 'u_me', senderName: '零零三03', senderAvatar: avatarMe,
+      type: 'text', text: '谢谢！新年快乐！🎉',
+      timestamp: ago(345540), isSelf: true,
+      status: 'read',
+    },
+    {
+      id: 'm_cloud_3', conversationId: 'c_cloud',
+      senderId: 'u_cloud', senderName: '云朵', senderAvatar: avatarCloud,
+      type: 'text', text: '好的，那先这样～',
+      timestamp: ago(259200), isSelf: false,
     },
   ],
 }
 
 export const mockSpecialContacts: Contact[] = [
-  { id: 'sp_new', name: '新好友', avatarUrl: '', wildFireId: '', isSpecial: true, specialKey: 'new_friends' },
-  { id: 'sp_fav', name: '收藏群组', avatarUrl: '', wildFireId: '', isSpecial: true, specialKey: 'favorite_groups' },
-  { id: 'sp_sub', name: '订阅频道', avatarUrl: '', wildFireId: '', isSpecial: true, specialKey: 'subscribed_channels' },
+  { id: 's_new_friends', name: '新的朋友', avatarUrl: avatarPeace, isSpecial: true, specialKey: 'new_friends' },
+  { id: 's_fav_groups', name: '收藏群组', avatarUrl: avatarMeet, isSpecial: true, specialKey: 'favorite_groups' },
+  { id: 's_channels', name: '订阅频道', avatarUrl: avatarBot, isSpecial: true, specialKey: 'subscribed_channels' },
 ]
 
 export const mockContacts: Contact[] = [
-  { id: 'u_wildfire_tech', name: '野火技术', avatarUrl: tile('wildfire', '2196F3'), wildFireId: 'wildfire-tech', isSpecial: false },
-  { id: 'u_drone', name: '无人机04', avatarUrl: ava('drone'), wildFireId: 'drone04', isSpecial: false },
-  { id: 'u_autumn', name: '秋田01', avatarUrl: ava('dog'), wildFireId: 'autumn01', isSpecial: false },
-  { id: 'u_jia', name: '贾浩1', avatarUrl: ava('jia'), wildFireId: 'jiahao1', isSpecial: false },
-  { id: 'u_an', name: '安安', avatarUrl: ava('cat'), wildFireId: 'anan', isSpecial: false },
-  { id: 'u_05', name: '05', avatarUrl: ava('scene'), wildFireId: 'scene05', isSpecial: false },
-  { id: 'u_feng', name: '丰云00', avatarUrl: ava('feng'), wildFireId: 'fengyun00', isSpecial: false },
-  { id: 'u_phone', name: '13866666666', avatarUrl: '', wildFireId: '13866666666', isSpecial: false },
-  { id: 'u_cloud', name: '小云', avatarUrl: ava('tiger'), wildFireId: 'xiaoyun', isSpecial: false },
+  { id: 'u_dino', name: '恐龙', avatarUrl: avatarDino, wildFireId: 'wx_dinosaur' },
+  { id: 'u_autumn', name: '秋天', avatarUrl: avatarAutumn, wildFireId: 'wx_autumn' },
+  { id: 'u_scene', name: '景色', avatarUrl: avatarScene, wildFireId: 'wx_scenery' },
+  { id: 'u_rain', name: '雨天', avatarUrl: avatarRain, wildFireId: 'wx_rainy' },
+  { id: 'u_cloud', name: '云朵', avatarUrl: avatarCloud, wildFireId: 'wx_cloudy' },
 ]
 
 export const mockFeatures: DiscoverFeature[] = [
-  { key: 'chatroom', title: '聊天室', icon: 'MessagesSquare', iconColor: 'text-green-500' },
-  { key: 'robot', title: '机器人', icon: 'Bot', iconColor: 'text-blue-500' },
-  { key: 'channel', title: '频道', icon: 'Megaphone', iconColor: 'text-yellow-500' },
-  { key: 'docs', title: '开发文档', icon: 'FileText', iconColor: 'text-purple-500' },
+  { key: 'moments', title: '朋友圈', icon: 'Image', iconColor: 'text-green-500', description: '和朋友分享生活点滴' },
+  { key: 'scan', title: '扫一扫', icon: 'Scan', iconColor: 'text-blue-500', description: '扫码、识物、翻译' },
+  { key: 'mini_programs', title: '小程序', icon: 'AppWindow', iconColor: 'text-orange-500', description: '免安装，用完即走' },
+  { key: 'music', title: '音乐', icon: 'Music', iconColor: 'text-red-500', description: '听歌识曲、在线音乐' },
+  { key: 'games', title: '游戏', icon: 'Gamepad2', iconColor: 'text-purple-500', description: '休闲小游戏' },
 ]
 
 export const mockSettings: SettingItem[] = [
-  { key: 'notifications', title: '消息通知', icon: 'Bell', iconColor: 'text-yellow-500' },
-  { key: 'favorites', title: '收藏', icon: 'Star', iconColor: 'text-blue-500' },
-  { key: 'files', title: '文件', icon: 'FileText', iconColor: 'text-emerald-500' },
-  { key: 'security', title: '账户安全', icon: 'ShieldCheck', iconColor: 'text-green-500' },
-  { key: 'settings', title: '设置', icon: 'Settings', iconColor: 'text-blue-500' },
+  { key: 'account', title: '账号与安全', icon: 'Shield', iconColor: 'text-blue-500' },
+  { key: 'privacy', title: '隐私', icon: 'Lock', iconColor: 'text-green-500' },
+  { key: 'notifications', title: '新消息通知', icon: 'Bell', iconColor: 'text-red-500' },
+  { key: 'chat', title: '聊天', icon: 'MessageSquare', iconColor: 'text-orange-500' },
+  { key: 'storage', title: '通用', icon: 'Settings', iconColor: 'text-gray-500' },
+  { key: 'themes', title: '主题', icon: 'Palette', iconColor: 'text-purple-500' },
+  { key: 'about', title: '关于 SWT', icon: 'Info', iconColor: 'text-cyan-500' },
+  { key: 'logout', title: '退出登录', icon: 'LogOut', iconColor: 'text-red-500' },
 ]
-
-let fallbackEnabled: boolean | null = null
 
 /**
  * 检测当前是否为 Wails 运行环境：
@@ -301,13 +257,8 @@ export function isWailsRuntime(): boolean {
 }
 
 /**
- * 是否应该启用 Mock 兜底（仅非 Wails 环境且非 production 构建时）
+ * 是否应该启用 Mock 兜底（非 Wails 环境时启用，方便浏览器独立开发预览）
  */
 export function shouldUseMock(): boolean {
-  if (fallbackEnabled !== null) return fallbackEnabled
-  fallbackEnabled = !isWailsRuntime() && import.meta.env.DEV
-  if (fallbackEnabled) {
-    console.info('[mockFallback] Enabled (browser-only dev mode)')
-  }
-  return fallbackEnabled
+  return !isWailsRuntime()
 }
