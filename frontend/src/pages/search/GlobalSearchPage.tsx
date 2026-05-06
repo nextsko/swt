@@ -47,27 +47,35 @@ export function GlobalSearchPage() {
         }
     }, [])
 
-    // 消息全文搜索：仅在用户开始输入后触发（限于非空会话）
+    // 消息全文搜索：并发数限制 3，结果上限 20
     useEffect(() => {
-        if (!q.trim()) {
-            return
-        }
+        if (!q.trim()) return
         let cancel = false
             ; (async () => {
                 const all: MessageHit[] = []
-                for (const c of convs) {
-                    const msgs = await chatService.getMessages(c.id, 80)
-                    msgs.forEach((m) => {
-                        if (m.text && m.text.toLowerCase().includes(q.toLowerCase())) {
-                            all.push({ message: m, conversationTitle: c.title })
-                        }
-                    })
+                const queue = [...convs]
+                const concurrency = 3
+                const next = async (): Promise<void> => {
+                    if (cancel) return
+                    const c = queue.shift()
+                    if (!c) return
+                    try {
+                        const msgs = await chatService.getMessages(c.id, 80)
+                        msgs.forEach((m) => {
+                            if (m.text && m.text.toLowerCase().includes(q.toLowerCase())) {
+                                all.push({ message: m, conversationTitle: c.title })
+                            }
+                        })
+                    } catch {
+                        // best effort
+                    }
+                    await next()
                 }
-                if (!cancel) setMessageHits(all.slice(0, 50))
+                const workers = Array.from({ length: Math.min(concurrency, convs.length) }, () => next())
+                await Promise.all(workers)
+                if (!cancel) setMessageHits(all.slice(0, 20))
             })()
-        return () => {
-            cancel = true
-        }
+        return () => { cancel = true }
     }, [q, convs])
 
     const filter = (s: string, ...fields: (string | undefined)[]) =>
