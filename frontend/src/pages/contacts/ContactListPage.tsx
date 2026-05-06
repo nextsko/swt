@@ -6,7 +6,8 @@ import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
 import { useBots } from '../../hooks/useBots'
 import { useContacts } from '../../hooks/useContacts'
-import { getBotConversationId } from '../../lib/botConversation'
+import { useConversations } from '../../hooks/useConversations'
+import { findBotConversationId } from '../../lib/botConversation'
 import type { Bot, Contact } from '../../types'
 
 const specialIconMap: Record<
@@ -95,10 +96,12 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export function ContactListPage() {
     const { special, contacts, loading } = useContacts()
     const { installed: installedBots } = useBots()
+    const { conversations } = useConversations()
     const navigate = useNavigate()
 
     const openBotChat = (bot: Bot) => {
-        navigate(`/chat/${getBotConversationId(bot.id)}`)
+        const convId = findBotConversationId(conversations, bot.id)
+        if (convId) navigate(`/chat/${convId}`)
     }
 
     const openContactDetail = (contact: Contact) => {

@@ -5,7 +5,8 @@ import { Avatar } from '../../components/common/Avatar'
 import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
 import { useBots } from '../../hooks/useBots'
-import { getBotConversationId } from '../../lib/botConversation'
+import { useConversations } from '../../hooks/useConversations'
+import { findBotConversationId } from '../../lib/botConversation'
 import { cn } from '../../lib/cn'
 import type { Bot } from '../../types'
 
@@ -24,6 +25,7 @@ const AVAILABLE_TOOLS = [
 export function BotMarketPage() {
     const navigate = useNavigate()
     const { bots, loading, install } = useBots()
+    const { conversations } = useConversations()
     const [installing, setInstalling] = useState<string | null>(null)
 
     const onInstall = async (bot: Bot) => {
@@ -37,7 +39,8 @@ export function BotMarketPage() {
     }
 
     const onOpenChat = (bot: Bot) => {
-        navigate(`/chat/${getBotConversationId(bot.id)}`)
+        const convId = findBotConversationId(conversations, bot.id)
+        if (convId) navigate(`/chat/${convId}`)
     }
 
     return (

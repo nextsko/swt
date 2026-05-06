@@ -4,9 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Avatar } from '../../components/common/Avatar'
 import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
-import { getBotConversationId } from '../../lib/botConversation'
+import { findBotConversationId } from '../../lib/botConversation'
 import { cn } from '../../lib/cn'
-import { botService } from '../../services'
+import { botService, chatService } from '../../services'
 import type { Bot } from '../../types'
 
 const AVAILABLE_TOOLS = [
@@ -22,11 +22,15 @@ export function BotDetailPage() {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [activeTools, setActiveTools] = useState<Set<string>>(new Set())
+    const [conversations, setConversations] = useState<import('../../types').Conversation[]>([])
 
     useEffect(() => {
         if (!id) return
         ;(async () => {
-            const b = await botService.getBot(id)
+            const [b, convs] = await Promise.all([
+                botService.getBot(id),
+                chatService.getConversations(),
+            ])
             if (b) {
                 setBot(b)
                 setActiveTools(
@@ -35,6 +39,7 @@ export function BotDetailPage() {
                         : new Set(AVAILABLE_TOOLS.map((t) => t.id)),
                 )
             }
+            setConversations(convs)
             setLoading(false)
         })()
     }, [id])
@@ -67,7 +72,10 @@ export function BotDetailPage() {
     }
 
     const openChat = () => {
-        if (bot) navigate(`/chat/${getBotConversationId(bot.id)}`)
+        if (bot) {
+            const convId = findBotConversationId(conversations, bot.id)
+            if (convId) navigate(`/chat/${convId}`)
+        }
     }
 
     if (loading) {

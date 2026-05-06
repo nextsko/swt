@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Avatar } from '../../components/common/Avatar'
 import { Page } from '../../components/layout/Page'
-import { getBotConversationId } from '../../lib/botConversation'
+import { findBotConversationId } from '../../lib/botConversation'
 import { cn } from '../../lib/cn'
 import { botService, chatService, contactService } from '../../services'
 import type { Bot, Contact, Conversation, Message } from '../../types'
@@ -187,7 +187,12 @@ export function GlobalSearchPage() {
                             sub={b.persona}
                             tag={b.installed ? '已添加' : undefined}
                             onClick={() =>
-                                b.installed ? navigate(`/chat/${getBotConversationId(b.id)}`) : navigate(`/bots/${b.id}`)
+                                b.installed
+                                    ? (() => {
+                                        const convId = findBotConversationId(convs, b.id)
+                                        if (convId) navigate(`/chat/${convId}`)
+                                    })()
+                                    : navigate(`/bots/${b.id}`)
                             }
                         />
                     ))}
