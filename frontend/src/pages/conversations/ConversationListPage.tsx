@@ -95,13 +95,13 @@ export function ConversationListPage() {
                         key: 'friend',
                         label: '添加朋友',
                         icon: <UserPlus className="w-4 h-4" />,
-                        onClick: () => console.info('add friend'),
+                        onClick: () => navigate('/contacts'),
                     },
                     {
                         key: 'scan',
                         label: '扫一扫',
                         icon: <QrCode className="w-4 h-4" />,
-                        onClick: () => console.info('scan'),
+                        onClick: () => navigate('/bots'),
                     },
                 ]}
             />
