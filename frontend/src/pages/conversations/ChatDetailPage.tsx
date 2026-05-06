@@ -85,11 +85,18 @@ export function ChatDetailPage() {
     } = useChat(id)
     const { contacts } = useContacts()
     const { installed: installedBots } = useBots()
-    const { conversations } = useConversations()
     const contentRef = useRef<HTMLDivElement>(null)
     const [menu, setMenu] = useState<{ msg: Message; rect: DOMRect } | null>(null)
     const [quote, setQuote] = useState<Message | null>(null)
     const [forwardMsg, setForwardMsg] = useState<Message | null>(null)
+    const [allConvs, setAllConvs] = useState<Conversation[]>([])
+
+    // 转发选择器懒加载会话列表
+    useEffect(() => {
+        if (forwardMsg) {
+            chatService.getConversations().then(setAllConvs)
+        }
+    }, [forwardMsg])
 
     useEffect(() => {
         const sentinel = contentRef.current
@@ -280,7 +287,7 @@ export function ChatDetailPage() {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <h3 className="text-white text-lg font-semibold mb-3 text-center">选择会话</h3>
-                        {conversations.map((conv) => (
+                        {allConvs.map((conv) => (
                             <button
                                 key={conv.id}
                                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl active:bg-white/10"

@@ -120,8 +120,18 @@ export function BubbleMenu({
  * Hook：给气泡绑定 long-press 检测，500ms 触发。
  */
 export function useLongPress(onTrigger: (rect: DOMRect) => void, delay = 500) {
-    const timerRef = useRef<number | null>(null)
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const targetRef = useRef<HTMLElement | null>(null)
+
+    // 组件卸载时清除定时器
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current)
+                timerRef.current = null
+            }
+        }
+    }, [])
 
     const start = (el: HTMLElement) => {
         targetRef.current = el
