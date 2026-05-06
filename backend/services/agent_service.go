@@ -168,16 +168,22 @@ func (s *AgentService) streamReply(
 	defer func() {
 		if r := recover(); r != nil {
 			logf("PANIC in streamReply: %v\n%s", r, debug.Stack())
-			application.Get().Event.Emit("chat:chunk", ChatChunkEvent{
-				MessageID:      messageID,
-				ConversationID: conversationID,
-				Done:           true,
-				Error:          fmt.Sprintf("panic: %v", r),
-			})
+			if a := application.Get(); a != nil {
+				a.Event.Emit("chat:chunk", ChatChunkEvent{
+					MessageID:      messageID,
+					ConversationID: conversationID,
+					Done:           true,
+					Error:          fmt.Sprintf("panic: %v", r),
+				})
+			}
 		}
 	}()
 
 	app := application.Get()
+	if app == nil {
+		logf("streamReply: application.Get() returned nil, aborting")
+		return
+	}
 	var full string
 	err := s.pool.Chat(ctx, bot, conversationID, userText, func(delta string, done bool) {
 		if delta != "" {
