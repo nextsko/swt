@@ -11,7 +11,7 @@ import { chatService } from '../../services'
 import type { Conversation } from '../../types'
 
 export function ConversationListPage() {
-    const { conversations, loading, refresh } = useConversations()
+    const { conversations, loading, error, refresh } = useConversations()
     const navigate = useNavigate()
     const [menuOpen, setMenuOpen] = useState(false)
     const [actionConv, setActionConv] = useState<Conversation | null>(null)
@@ -29,14 +29,18 @@ export function ConversationListPage() {
 
     const handleConversationAction = async (action: ConversationMenuAction) => {
         if (!actionConv) return
-        if (action === 'toggle-pin') {
-            await chatService.setPinned(actionConv.id, !actionConv.pinned)
-        } else if (action === 'toggle-mute') {
-            await chatService.setMute(actionConv.id, !actionConv.muteNotice)
-        } else if (action === 'delete') {
-            await chatService.deleteConversation(actionConv.id)
+        try {
+            if (action === 'toggle-pin') {
+                await chatService.setPinned(actionConv.id, !actionConv.pinned)
+            } else if (action === 'toggle-mute') {
+                await chatService.setMute(actionConv.id, !actionConv.muteNotice)
+            } else if (action === 'delete') {
+                await chatService.deleteConversation(actionConv.id)
+            }
+            await refresh()
+        } catch {
+            // best effort
         }
-        await refresh()
         closeConversationMenu()
     }
 
@@ -53,6 +57,10 @@ export function ConversationListPage() {
             >
                 {loading ? (
                     <div className="p-6 text-center text-[var(--text-tertiary)] text-sm">加载中…</div>
+                ) : error ? (
+                    <div className="p-6 text-center text-[#FF453A] text-sm">
+                        加载失败：{error.message}
+                    </div>
                 ) : conversations.length === 0 ? (
                     <div className="p-10 text-center text-[var(--text-tertiary)] text-sm">暂无消息</div>
                 ) : (
