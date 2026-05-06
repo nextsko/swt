@@ -15,8 +15,6 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-var quitSignal = make(chan bool)
-
 func init() {
 	application.RegisterEvent[string]("time")
 	application.RegisterEvent[services.ChatChunkEvent]("chat:chunk")
@@ -67,12 +65,6 @@ func main() {
 			app.Event.Emit("time", now)
 			time.Sleep(time.Second)
 		}
-	}()
-
-	// Listen for quit signal from frontend
-	go func() {
-		<-quitSignal
-		app.Quit()
 	}()
 
 	err := app.Run()

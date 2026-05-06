@@ -1,6 +1,6 @@
 package backend
 
-var quitSignal = make(chan bool)
+import "github.com/wailsapp/wails/v3/pkg/application"
 
 type GreetService struct{}
 
@@ -13,5 +13,8 @@ func (g *GreetService) Greet(name string) string {
 }
 
 func (g *GreetService) QuitApp() {
-	quitSignal <- true
+	app := application.Get()
+	if app != nil {
+		app.Quit()
+	}
 }
