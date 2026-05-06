@@ -5,90 +5,45 @@ import { shouldUseMock } from './mockFallback'
 
 // mock 数据（与后端 seed.SeedBots() 保持一致）
 const mockBots: Bot[] = [
-    {
-        id: 'bot_assistant',
-        name: 'AI 助手',
-        avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=bot&backgroundColor=2196F3',
-        persona: '通用智能助手，擅长问答、总结、计划。',
-        systemPrompt: '',
-        greeting: '你好！我是 AI 助手。',
-        temperature: 0.7,
-        maxTokens: 2048,
-        installed: true,
-        accentColor: 'bg-blue-500',
-    },
-    {
-        id: 'bot_coder',
-        name: '代码专家',
-        avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=coder&backgroundColor=22c55e',
-        persona: '资深全栈程序员，擅长代码审查、bug 排查、架构设计。',
-        systemPrompt: '',
-        greeting: '贴代码或 bug，我来帮你看。',
-        temperature: 0.3,
-        maxTokens: 3000,
-        installed: false,
-        accentColor: 'bg-emerald-500',
-    },
-    {
-        id: 'bot_translator',
-        name: '翻译官',
-        avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=translator&backgroundColor=f59e0b',
-        persona: '中英日韩法多语互译，保留语气与上下文。',
-        systemPrompt: '',
-        greeting: '发中文翻英文；发外文翻中文。',
-        temperature: 0.2,
-        maxTokens: 1500,
-        installed: false,
-        accentColor: 'bg-amber-500',
-    },
-    {
-        id: 'bot_writer',
-        name: '文案写手',
-        avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=writer&backgroundColor=ec4899',
-        persona: '品牌/社媒/推文文案，风格多样。',
-        systemPrompt: '',
-        greeting: '告诉我产品、目标读者、风格偏好。',
-        temperature: 0.95,
-        maxTokens: 1800,
-        installed: false,
-        accentColor: 'bg-pink-500',
-    },
-    {
-        id: 'bot_coach',
-        name: '心理教练',
-        avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=coach&backgroundColor=8b5cf6',
-        persona: '温和倾听，不评判，基于 CBT 给微小行动建议。',
-        systemPrompt: '',
-        greeting: '我在这儿听你说。',
-        temperature: 0.8,
-        maxTokens: 1200,
-        installed: false,
-        accentColor: 'bg-violet-500',
-    },
-    {
-        id: 'bot_planner',
-        name: '旅行规划师',
-        avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=planner&backgroundColor=0ea5e9',
-        persona: '基于目的地、时间、预算给可执行行程。',
-        systemPrompt: '',
-        greeting: '想去哪？几天？预算如何？',
-        temperature: 0.6,
-        maxTokens: 2500,
-        installed: false,
-        accentColor: 'bg-sky-500',
-    },
-    {
-        id: 'bot_creator',
-        name: '造物主',
-        avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=creator&backgroundColor=6366f1',
-        persona: '机器人创造者，帮你设计和创建新的 AI 机器人角色。',
-        systemPrompt: '',
-        greeting: '我是造物主 🧙，可以帮你创建新的 AI 机器人！告诉我你想要什么样的机器人。',
-        temperature: 0.7,
-        maxTokens: 2048,
-        installed: false,
-        accentColor: 'bg-indigo-500',
-    },
+  {
+    id: 'bot_general',
+    name: 'AI 助手',
+    avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=bot&backgroundColor=2196F3',
+    persona: '全能 AI 助手，帮你解决日常问题',
+    systemPrompt: '你是一个有用的 AI 助手。请用中文回答问题，保持友好、专业的语气。',
+    greeting: '你好！我是你的 AI 助手，有什么可以帮你的吗？',
+    temperature: 0.7,
+    maxTokens: 2048,
+    installed: true,
+    accentColor: 'bg-blue-500',
+    toolIds: undefined,
+  },
+  {
+    id: 'bot_coder',
+    name: '代码助手',
+    avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=coder&backgroundColor=10B981',
+    persona: '编程专家，帮你写代码、调试、架构设计',
+    systemPrompt: '你是一个资深的软件工程师。擅长 Go、TypeScript、Python。',
+    greeting: '嗨，我是代码助手！需要写什么代码？',
+    temperature: 0.3,
+    maxTokens: 4096,
+    installed: false,
+    accentColor: 'bg-green-500',
+    toolIds: ['file', 'bash'],
+  },
+  {
+    id: 'bot_translator',
+    name: '翻译助手',
+    avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=translator&backgroundColor=8B5CF6',
+    persona: '多语言翻译专家，支持中、英、日、韩等语言',
+    systemPrompt: '你是一个专业的翻译。请准确翻译用户提供的内容。',
+    greeting: '你好！我可以帮你翻译多种语言，发内容过来吧。',
+    temperature: 0.2,
+    maxTokens: 2048,
+    installed: false,
+    accentColor: 'bg-purple-500',
+    toolIds: undefined,
+  },
 ]
 
 export const botService = {
@@ -113,20 +68,26 @@ export const botService = {
     async install(id: string): Promise<Conversation | null> {
         if (shouldUseMock()) {
             const idx = mockBots.findIndex((b) => b.id === id)
-            if (idx >= 0) mockBots[idx].installed = true
-            return {
-                id: getBotConversationId(id),
+            if (idx < 0) return null
+            mockBots[idx].installed = true
+            const conv: Conversation = {
+                id: `c_bot_${id}`,
                 type: 'bot',
-                title: mockBots[idx]?.name ?? id,
-                avatarUrl: mockBots[idx]?.avatar ?? '',
-                lastMessage: mockBots[idx]?.greeting ?? '',
+                title: mockBots[idx].name ?? id,
+                avatarUrl: mockBots[idx].avatar ?? '',
+                lastMessage: mockBots[idx].greeting ?? '',
                 lastTime: Date.now(),
-                unreadCount: 0,
+                unreadCount: 1,
                 pinned: false,
                 muteNotice: false,
                 botId: id,
                 memberIds: ['u_me', id],
             }
+            const { mockConversations } = await import('./mockFallback')
+            if (!mockConversations.find((c) => c.id === conv.id)) {
+                mockConversations.unshift(conv)
+            }
+            return conv
         }
         const res = await BotBinding.InstallBot(id)
         return (res ?? null) as unknown as Conversation | null
