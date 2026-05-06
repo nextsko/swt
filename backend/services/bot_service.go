@@ -63,7 +63,13 @@ func (s *BotService) InstallBot(id string) (*domain.Conversation, error) {
 
 // UninstallBot 从联系人/会话中移除机器人（会话本身不删，只标记 bot 未安装；重新安装时会复用）。
 func (s *BotService) UninstallBot(id string) error {
-	return s.bots.SetInstalled(id, false)
+	if err := s.bots.SetInstalled(id, false); err != nil {
+		return err
+	}
+	if s.pool != nil {
+		s.pool.InvalidatePool(id)
+	}
+	return nil
 }
 
 // SetToolIds 配置机器人可用工具。空列表 = 全部工具。

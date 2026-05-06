@@ -3,6 +3,7 @@ package repository
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -102,11 +103,13 @@ func (s *MockStore) saveToDisk() {
 	}
 	s.mu.RUnlock()
 	if err := os.MkdirAll(filepath.Dir(s.statePath), 0o755); err != nil {
+		log.Printf("[MockStore] saveToDisk: mkdir error: %v", err)
 		return
 	}
 	tmp := s.statePath + ".tmp"
 	f, err := os.Create(tmp)
 	if err != nil {
+		log.Printf("[MockStore] saveToDisk: create error: %v", err)
 		return
 	}
 	enc := json.NewEncoder(f)
@@ -114,10 +117,13 @@ func (s *MockStore) saveToDisk() {
 	if err := enc.Encode(&state); err != nil {
 		_ = f.Close()
 		_ = os.Remove(tmp)
+		log.Printf("[MockStore] saveToDisk: encode error: %v", err)
 		return
 	}
 	_ = f.Close()
-	_ = os.Rename(tmp, s.statePath)
+	if err := os.Rename(tmp, s.statePath); err != nil {
+		log.Printf("[MockStore] saveToDisk: rename error: %v", err)
+	}
 }
 
 func (s *MockStore) loadFromDisk() {
