@@ -14,7 +14,7 @@ import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
 import { useBots } from '../../hooks/useBots'
 import { useContacts } from '../../hooks/useContacts'
-import { useChat } from '../../hooks/useConversations'
+import { useChat, useConversations } from '../../hooks/useConversations'
 import { formatMessageGroupTime } from '../../lib/time'
 import { chatService } from '../../services'
 import type { Message } from '../../types'
@@ -85,9 +85,11 @@ export function ChatDetailPage() {
     } = useChat(id)
     const { contacts } = useContacts()
     const { installed: installedBots } = useBots()
+    const { conversations } = useConversations()
     const contentRef = useRef<HTMLDivElement>(null)
     const [menu, setMenu] = useState<{ msg: Message; rect: DOMRect } | null>(null)
     const [quote, setQuote] = useState<Message | null>(null)
+    const [forwardMsg, setForwardMsg] = useState<Message | null>(null)
 
     useEffect(() => {
         const sentinel = contentRef.current
@@ -122,8 +124,7 @@ export function ChatDetailPage() {
                 setQuote(msg)
                 return
             case 'forward':
-                // 占位：真实实现需要打开会话选择器；此处仅提示
-                alert('转发功能：阶段 C 会接入会话选择器')
+                setForwardMsg(msg)
                 return
             case 'recall':
                 await recallMessage(msg.id)
@@ -267,6 +268,46 @@ export function ChatDetailPage() {
                 onAction={handleBubbleAction}
                 onClose={() => setMenu(null)}
             />
+
+            {/* 转发选择器 */}
+            {forwardMsg && (
+                <div
+                    className="fixed inset-0 z-[70] bg-black/50 flex items-end sm:items-center justify-center"
+                    onClick={() => setForwardMsg(null)}
+                >
+                    <div
+                        className="bg-[#1C1C1E] rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[60vh] overflow-y-auto p-4"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="text-white text-lg font-semibold mb-3 text-center">选择会话</h3>
+                        {conversations.map((conv) => (
+                            <button
+                                key={conv.id}
+                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl active:bg-white/10"
+                                onClick={async () => {
+                                    if (!forwardMsg || !id) return
+                                    const text = forwardMsg.text
+                                        ? `> ${forwardMsg.text.split('\n').slice(0, 3).join('\n> ')}\n\n(转发)`
+                                        : '(转发)'
+                                    await chatService.sendText(conv.id, text, [])
+                                    setForwardMsg(null)
+                                }}
+                            >
+                                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white text-sm font-medium">
+                                    {conv.title.charAt(0)}
+                                </div>
+                                <span className="text-white text-sm">{conv.title}</span>
+                            </button>
+                        ))}
+                        <button
+                            className="w-full mt-2 py-2.5 text-center text-[#FF453A] text-sm active:bg-white/5 rounded-xl"
+                            onClick={() => setForwardMsg(null)}
+                        >
+                            取消
+                        </button>
+                    </div>
+                </div>
+            )}
         </Page>
     )
 }
