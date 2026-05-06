@@ -34,11 +34,10 @@ const BotConversationID = "c_bot"
 
 // CurrentUser 当前登录用户（Mock）
 var CurrentUser = domain.User{
-	ID:         "u_me",
-	Name:       "零零三03",
-	AvatarURL:  avatarMe,
-	WildFireID: "wfid-b06cb64888564581b5e8e00c042819",
-	Bio:        "",
+	ID:        "u_me",
+	Name:      "零零三03",
+	AvatarURL: avatarMe,
+	Bio:       "代码写多了，自然就会了。",
 }
 
 // ago 返回 n 秒前的 Unix 毫秒时间戳
@@ -48,129 +47,66 @@ func ago(seconds int) int64 {
 
 // SeedConversations 初始会话列表（按 LastTime 倒序排列）
 func SeedConversations() []domain.Conversation {
+	now := time.Now()
 	return []domain.Conversation{
 		{
-			ID:          BotConversationID,
+			ID:          "c_bot",
 			Type:        domain.ConvTypeBot,
 			Title:       "AI 助手",
 			AvatarURL:   avatarBot,
-			LastMessage: "你好！我是 AI 助手，有什么可以帮你的？",
-			LastTime:    ago(10),
+			LastMessage: "你好！我是你的 AI 助手，有什么可以帮你的吗？",
+			LastTime:    now.Add(-30 * time.Second).UnixMilli(),
 			UnreadCount: 1,
 			Pinned:      true,
-			BotID:       "bot_assistant",
-			MemberIDs:   []string{"u_me", "bot_assistant"},
+			MuteNotice:  false,
+			BotID:       "bot_general",
 		},
 		{
-			ID:          "c_system",
-			Type:        domain.ConvTypeSystem,
-			Title:       "系统管理员",
-			AvatarURL:   avatarWildFire,
-			LastMessage: "系统管理员: 欢迎您的归来，如果使用过程中有什么…",
-			LastTime:    ago(60 * 60 * 12), // 昨天
-			UnreadCount: 2,
-			MemberIDs:   []string{"u_me", "u_system"},
-		},
-		{
-			ID:            "c_group2",
-			Type:          domain.ConvTypeGroup,
-			Title:         "2",
-			AvatarURL:     "",
-			LastMessage:   "Mr Dinosaur02: [视频]",
-			LastTime:      ago(60 * 60 * 24 * 40),
-			UnreadCount:   0,
-			MuteNotice:    true,
-			MemberAvatars: []string{avatarDino, avatarScene, avatarRain, avatarAutumn},
-			MemberIDs:     []string{"u_me", "u_dino", "u_05", "u_rain", "u_autumn"},
-			OwnerID:       "u_dino",
-		},
-		{
-			ID:          "c_05",
+			ID:          "c_dino",
 			Type:        domain.ConvTypeSingle,
-			Title:       "05",
-			AvatarURL:   avatarScene,
-			LastMessage: "05: [音视频通话]",
-			LastTime:    ago(60 * 60 * 2), // 09:11
+			Title:       "恐龙",
+			AvatarURL:   avatarDino,
+			LastMessage: "周末一起去爬山吧 🏔️",
+			LastTime:    now.Add(-2 * time.Hour).UnixMilli(),
 			UnreadCount: 0,
-			MemberIDs:   []string{"u_me", "u_05"},
-		},
-		{
-			ID:          "c_rain",
-			Type:        domain.ConvTypeSingle,
-			Title:       "大雨",
-			AvatarURL:   avatarWildFire,
-			LastMessage: "你们已经是好友了，可以开始聊天了。",
-			LastTime:    ago(60 * 60 * 24), // 昨天
-			UnreadCount: 0,
-			MemberIDs:   []string{"u_me", "u_rain"},
-		},
-		{
-			ID:            "c_group3",
-			Type:          domain.ConvTypeGroup,
-			Title:         "秋田01,零零三03,大雨,05",
-			AvatarURL:     "",
-			LastMessage:   "大雨: 好👍、",
-			LastTime:      ago(60 * 60 * 24 * 58),
-			UnreadCount:   0,
-			MemberAvatars: []string{avatarAutumn, avatarZero, avatarRain, avatarWildFire},
-			MemberIDs:     []string{"u_autumn", "u_me", "u_rain", "u_05"},
-			OwnerID:       "u_autumn",
-		},
-		{
-			ID:            "c_meeting",
-			Type:          domain.ConvTypeGroup,
-			Title:         "会议测试群",
-			AvatarURL:     "",
-			LastMessage:   "秋田01: [音视频通话]",
-			LastTime:      ago(60 * 60 * 24 * 58),
-			UnreadCount:   0,
-			MemberAvatars: []string{avatarMeet, avatarWildFire, avatarZero, avatarAutumn},
-			MemberIDs:     []string{"u_me", "u_autumn", "u_rain", "u_05"},
-			OwnerID:       "u_me",
+			Pinned:      false,
+			MuteNotice:  false,
 		},
 		{
 			ID:          "c_autumn",
 			Type:        domain.ConvTypeSingle,
-			Title:       "秋田01",
-			AvatarURL:   avatarDog,
-			LastMessage: "秋田01: 你们已经是好友了，可以开始聊天了。",
-			LastTime:    ago(60 * 60 * 24 * 58),
-			UnreadCount: 0,
-			MemberIDs:   []string{"u_me", "u_autumn"},
+			Title:       "秋天",
+			AvatarURL:   avatarAutumn,
+			LastMessage: "[图片]",
+			LastTime:    now.Add(-8 * time.Hour).UnixMilli(),
+			UnreadCount: 3,
+			Pinned:      false,
+			MuteNotice:  false,
 		},
 		{
-			ID:            "c_group4",
-			Type:          domain.ConvTypeGroup,
-			Title:         "零零三03、大雨、安",
-			AvatarURL:     "",
-			LastMessage:   "大雨: 大雨 邀请 你 秋田01 加入通话",
-			LastTime:      ago(60 * 60 * 24 * 60),
-			UnreadCount:   0,
-			MemberAvatars: []string{avatarMe, avatarRain, avatarPeace, avatarZero},
-			MemberIDs:     []string{"u_me", "u_rain", "u_an"},
-			OwnerID:       "u_me",
+			ID:          "c_meeting",
+			Type:        domain.ConvTypeGroup,
+			Title:       "项目周会群",
+			AvatarURL:   avatarMeet,
+			LastMessage: "收到，明天同步进度",
+			LastTime:    now.Add(-24 * time.Hour).UnixMilli(),
+			UnreadCount: 5,
+			Pinned:      false,
+			MuteNotice:  true,
+			MemberAvatars: []string{avatarDino, avatarScene, avatarRain, avatarAutumn},
+			MemberIDs:     []string{"u_me", "u_dino", "u_scene", "u_rain", "u_autumn"},
+			OwnerID:       "u_dino",
 		},
 		{
-			ID:          "c_peace",
+			ID:          "c_cloud",
 			Type:        domain.ConvTypeSingle,
-			Title:       "安安",
-			AvatarURL:   avatarCat,
-			LastMessage: "[音视频通话]",
-			LastTime:    ago(60 * 60 * 24 * 61),
+			Title:       "云朵",
+			AvatarURL:   avatarCloud,
+			LastMessage: "好的，那先这样～",
+			LastTime:    now.Add(-3 * 24 * time.Hour).UnixMilli(),
 			UnreadCount: 0,
-			MemberIDs:   []string{"u_me", "u_an"},
-		},
-		{
-			ID:            "c_group5",
-			Type:          domain.ConvTypeGroup,
-			Title:         "丰云00,大雨,贾浩1",
-			AvatarURL:     "",
-			LastMessage:   "秋田01: 我们",
-			LastTime:      ago(60 * 60 * 24 * 65),
-			UnreadCount:   0,
-			MemberAvatars: []string{avatarFeng, avatarRain, avatarJia, avatarAutumn},
-			MemberIDs:     []string{"u_me", "u_feng", "u_rain", "u_jia"},
-			OwnerID:       "u_feng",
+			Pinned:      false,
+			MuteNotice:  false,
 		},
 	}
 }
@@ -178,191 +114,170 @@ func SeedConversations() []domain.Conversation {
 // SeedMessages 构造某会话的消息列表
 func SeedMessages(convID string) []domain.Message {
 	switch convID {
-	case BotConversationID:
+	case "c_bot":
 		return []domain.Message{
 			{
-				ID:             "m_bot_hello",
-				ConversationID: convID,
-				SenderID:       "u_bot",
-				SenderName:     "AI 助手",
-				SenderAvatar:   avatarBot,
-				Type:           domain.MsgText,
-				Text:           "你好！我是 AI 助手，支持 **Markdown** 回答、代码块高亮。\n\n试试问我：\n- 介绍一下你自己\n- 写一段 Go 的 hello world\n- 列个 Todo 给我",
-				Timestamp:      ago(10),
+				ID: "m_bot_1", ConversationID: "c_bot",
+				SenderID: "bot_general", SenderName: "AI 助手", SenderAvatar: avatarBot,
+				Type: "text", Text: "你好！我是你的 AI 助手，有什么可以帮你的吗？",
+				Timestamp: ago(120), IsSelf: false,
+				Status: domain.StatusRead,
 			},
 		}
-	case "c_group2":
+	case "c_dino":
 		return []domain.Message{
 			{
-				ID:             "m_1",
-				ConversationID: convID,
-				SenderID:       "u_dino",
-				SenderName:     "Mr Dinosaur02",
-				SenderAvatar:   avatarDino,
-				Type:           domain.MsgImage,
-				MediaURL:       "https://picsum.photos/seed/dino1/400/600",
-				Timestamp:      ago(60 * 60 * 24 * 40),
+				ID: "m_dino_1", ConversationID: "c_dino",
+				SenderID: "u_me", SenderName: "零零三03", SenderAvatar: avatarMe,
+				Type: "text", Text: "在吗？",
+				Timestamp: ago(3 * 3600), IsSelf: true,
+				Status: domain.StatusRead,
 			},
 			{
-				ID:             "m_2",
-				ConversationID: convID,
-				SenderID:       "u_dino",
-				SenderName:     "Mr Dinosaur02",
-				SenderAvatar:   avatarDino,
-				Type:           domain.MsgImage,
-				MediaURL:       "https://picsum.photos/seed/dino2/400/600",
-				Timestamp:      ago(60*60*24*40 - 30),
+				ID: "m_dino_2", ConversationID: "c_dino",
+				SenderID: "u_dino", SenderName: "恐龙", SenderAvatar: avatarDino,
+				Type: "text", Text: "在呢，咋了？",
+				Timestamp: ago(3*3600 - 30), IsSelf: false,
 			},
 			{
-				ID:             "m_3",
-				ConversationID: convID,
-				SenderID:       "u_dino",
-				SenderName:     "Mr Dinosaur02",
-				SenderAvatar:   avatarDino,
-				Type:           domain.MsgVideo,
-				MediaURL:       "https://picsum.photos/seed/dino3/400/600",
-				DurationSec:    3,
-				Timestamp:      ago(60*60*24*40 - 60),
+				ID: "m_dino_3", ConversationID: "c_dino",
+				SenderID: "u_me", SenderName: "零零三03", SenderAvatar: avatarMe,
+				Type: "text", Text: "这周末有空吗？",
+				Timestamp: ago(2*3600 + 600), IsSelf: true,
+				Status: domain.StatusRead,
+			},
+			{
+				ID: "m_dino_4", ConversationID: "c_dino",
+				SenderID: "u_dino", SenderName: "恐龙", SenderAvatar: avatarDino,
+				Type: "text", Text: "周末一起去爬山吧 🏔️",
+				Timestamp: ago(2 * 3600), IsSelf: false,
 			},
 		}
-	case "c_system":
+	case "c_autumn":
 		return []domain.Message{
 			{
-				ID:             "m_sys_1",
-				ConversationID: convID,
-				SenderID:       "u_system",
-				SenderName:     "系统管理员",
-				SenderAvatar:   avatarWildFire,
-				Type:           domain.MsgText,
-				Text:           "欢迎您的归来，如果使用过程中有什么问题请随时联系我们。",
-				Timestamp:      ago(60 * 60 * 24),
+				ID: "m_aut_1", ConversationID: "c_autumn",
+				SenderID: "u_autumn", SenderName: "秋天", SenderAvatar: avatarAutumn,
+				Type: "image", MediaURL: "https://picsum.photos/seed/autumn1/400/300",
+				Timestamp: ago(9 * 3600), IsSelf: false,
 			},
 			{
-				ID:             "m_sys_2",
-				ConversationID: convID,
-				SenderID:       "u_me",
-				SenderName:     "零零三03",
-				SenderAvatar:   avatarMe,
-				Type:           domain.MsgText,
-				Text:           "好的，谢谢！",
-				Timestamp:      ago(60 * 60 * 12),
-				IsSelf:         true,
+				ID: "m_aut_2", ConversationID: "c_autumn",
+				SenderID: "u_autumn", SenderName: "秋天", SenderAvatar: avatarAutumn,
+				Type: "text", Text: "看这个风景如何？",
+				Timestamp: ago(9*3600 - 10), IsSelf: false,
+			},
+			{
+				ID: "m_aut_3", ConversationID: "c_autumn",
+				SenderID: "u_me", SenderName: "零零三03", SenderAvatar: avatarMe,
+				Type: "text", Text: "哇，这是哪里？",
+				Timestamp: ago(8*3600 + 300), IsSelf: true,
+				Status: domain.StatusRead,
+			},
+			{
+				ID: "m_aut_4", ConversationID: "c_autumn",
+				SenderID: "u_autumn", SenderName: "秋天", SenderAvatar: avatarAutumn,
+				Type: "voice", DurationSec: 12,
+				Timestamp: ago(8 * 3600), IsSelf: false,
 			},
 		}
-	case "c_rain":
+	case "c_meeting":
 		return []domain.Message{
 			{
-				ID:             "m_rain_tip",
-				ConversationID: convID,
-				SenderID:       "",
-				Type:           domain.MsgTip,
-				Text:           "你们已经是好友了，可以开始聊天了。",
-				Timestamp:      ago(60 * 60 * 24),
+				ID: "m_meet_1", ConversationID: "c_meeting",
+				SenderID: "u_dino", SenderName: "恐龙", SenderAvatar: avatarDino,
+				Type: "text", Text: "周会提醒：明天下午 2 点同步进度",
+				Timestamp: ago(26 * 3600), IsSelf: false,
 			},
 			{
-				ID:             "m_rain_1",
-				ConversationID: convID,
-				SenderID:       "u_rain",
-				SenderName:     "大雨",
-				SenderAvatar:   avatarWildFire,
-				Type:           domain.MsgText,
-				Text:           "你好，很高兴认识你 👋",
-				Timestamp:      ago(60 * 60 * 20),
+				ID: "m_meet_2", ConversationID: "c_meeting",
+				SenderID: "u_scene", SenderName: "景色", SenderAvatar: avatarScene,
+				Type: "text", Text: "好的",
+				Timestamp: ago(26*3600 - 120), IsSelf: false,
 			},
 			{
-				ID:             "m_rain_2",
-				ConversationID: convID,
-				SenderID:       "u_me",
-				SenderName:     "零零三03",
-				SenderAvatar:   avatarMe,
-				Type:           domain.MsgText,
-				Text:           "你好~",
-				Timestamp:      ago(60 * 60 * 19),
-				IsSelf:         true,
+				ID: "m_meet_3", ConversationID: "c_meeting",
+				SenderID: "u_rain", SenderName: "雨天", SenderAvatar: avatarRain,
+				Type: "file", Text: "进度报告 Q2.pdf", FileName: "进度报告 Q2.pdf",
+				MediaURL: "https://picsum.photos/seed/pdf/100/100",
+				Timestamp: ago(25 * 3600), IsSelf: false,
 			},
 			{
-				ID:             "m_rain_3",
-				ConversationID: convID,
-				SenderID:       "u_rain",
-				SenderName:     "大雨",
-				SenderAvatar:   avatarWildFire,
-				Type:           domain.MsgVoice,
-				DurationSec:    8,
-				Timestamp:      ago(60 * 60 * 18),
+				ID: "m_meet_4", ConversationID: "c_meeting",
+				SenderID: "u_me", SenderName: "零零三03", SenderAvatar: avatarMe,
+				Type: "text", Text: "收到，明天同步进度",
+				Timestamp: ago(24 * 3600), IsSelf: true,
+				Status: domain.StatusDelivered,
+			},
+		}
+	case "c_cloud":
+		return []domain.Message{
+			{
+				ID: "m_cloud_1", ConversationID: "c_cloud",
+				SenderID: "u_cloud", SenderName: "云朵", SenderAvatar: avatarCloud,
+				Type: "redpacket", Text: "新年快乐 🧧",
+				Timestamp: ago(4 * 24 * 3600), IsSelf: false,
+			},
+			{
+				ID: "m_cloud_2", ConversationID: "c_cloud",
+				SenderID: "u_me", SenderName: "零零三03", SenderAvatar: avatarMe,
+				Type: "text", Text: "谢谢！新年快乐！🎉",
+				Timestamp: ago(4*24*3600 - 60), IsSelf: true,
+				Status: domain.StatusRead,
+			},
+			{
+				ID: "m_cloud_3", ConversationID: "c_cloud",
+				SenderID: "u_cloud", SenderName: "云朵", SenderAvatar: avatarCloud,
+				Type: "text", Text: "好的，那先这样～",
+				Timestamp: ago(3 * 24 * 3600), IsSelf: false,
 			},
 		}
 	default:
-		return []domain.Message{
-			{
-				ID:             "m_tip_default",
-				ConversationID: convID,
-				Type:           domain.MsgTip,
-				Text:           "暂无消息",
-				Timestamp:      ago(0),
-			},
-		}
+		return nil
 	}
 }
 
 // SeedSpecialContacts 顶部固定三项
 func SeedSpecialContacts() []domain.Contact {
 	return []domain.Contact{
-		{
-			ID:         "sp_new_friends",
-			Name:       "新好友",
-			AvatarURL:  "",
-			IsSpecial:  true,
-			SpecialKey: "new_friends",
-		},
-		{
-			ID:         "sp_favorite_groups",
-			Name:       "收藏群组",
-			AvatarURL:  "",
-			IsSpecial:  true,
-			SpecialKey: "favorite_groups",
-		},
-		{
-			ID:         "sp_subscribed_channels",
-			Name:       "订阅频道",
-			AvatarURL:  "",
-			IsSpecial:  true,
-			SpecialKey: "subscribed_channels",
-		},
+		{ID: "s_new_friends", Name: "新的朋友", AvatarURL: avatarPeace, IsSpecial: true, SpecialKey: "new_friends"},
+		{ID: "s_fav_groups", Name: "收藏群组", AvatarURL: avatarMeet, IsSpecial: true, SpecialKey: "favorite_groups"},
+		{ID: "s_channels", Name: "订阅频道", AvatarURL: avatarBot, IsSpecial: true, SpecialKey: "subscribed_channels"},
 	}
 }
 
 // SeedContacts 常规联系人列表
 func SeedContacts() []domain.Contact {
 	return []domain.Contact{
-		{ID: "u_wildfire_tech", Name: "野火技术", AvatarURL: avatarWildFire, WildFireID: "wildfire-tech"},
-		{ID: "u_drone", Name: "无人机04", AvatarURL: avatarDrone, WildFireID: "drone04"},
-		{ID: "u_autumn", Name: "秋田01", AvatarURL: avatarDog, WildFireID: "autumn01"},
-		{ID: "u_jia", Name: "贾浩1", AvatarURL: avatarJia, WildFireID: "jiahao1"},
-		{ID: "u_an", Name: "安安", AvatarURL: avatarCat, WildFireID: "anan"},
-		{ID: "u_05", Name: "05", AvatarURL: avatarScene, WildFireID: "scene05"},
-		{ID: "u_feng", Name: "丰云00", AvatarURL: avatarFeng, WildFireID: "fengyun00"},
-		{ID: "u_phone", Name: "13866666666", AvatarURL: "", WildFireID: "13866666666"},
-		{ID: "u_cloud", Name: "小云", AvatarURL: avatarTiger, WildFireID: "xiaoyun"},
+		{ID: "u_dino", Name: "恐龙", AvatarURL: avatarDino, WildFireID: "wx_dinosaur"},
+		{ID: "u_autumn", Name: "秋天", AvatarURL: avatarAutumn, WildFireID: "wx_autumn"},
+		{ID: "u_scene", Name: "景色", AvatarURL: avatarScene, WildFireID: "wx_scenery"},
+		{ID: "u_rain", Name: "雨天", AvatarURL: avatarRain, WildFireID: "wx_rainy"},
+		{ID: "u_cloud", Name: "云朵", AvatarURL: avatarCloud, WildFireID: "wx_cloudy"},
 	}
 }
 
 // SeedDiscoverFeatures 发现 Tab 的功能项
 func SeedDiscoverFeatures() []domain.DiscoverFeature {
 	return []domain.DiscoverFeature{
-		{Key: "chatroom", Title: "聊天室", Icon: "MessagesSquare", IconColor: "text-green-500"},
-		{Key: "robot", Title: "机器人", Icon: "Bot", IconColor: "text-blue-500"},
-		{Key: "channel", Title: "频道", Icon: "Megaphone", IconColor: "text-yellow-500"},
-		{Key: "docs", Title: "开发文档", Icon: "FileText", IconColor: "text-purple-500"},
+		{Key: "moments", Title: "朋友圈", Icon: "Image", IconColor: "text-green-500", Description: "和朋友分享生活点滴"},
+		{Key: "scan", Title: "扫一扫", Icon: "Scan", IconColor: "text-blue-500", Description: "扫码、识物、翻译"},
+		{Key: "mini_programs", Title: "小程序", Icon: "AppWindow", IconColor: "text-orange-500", Description: "免安装，用完即走"},
+		{Key: "music", Title: "音乐", Icon: "Music", IconColor: "text-red-500", Description: "听歌识曲、在线音乐"},
+		{Key: "games", Title: "游戏", Icon: "Gamepad2", IconColor: "text-purple-500", Description: "休闲小游戏"},
 	}
 }
 
 // SeedSettings 我的 Tab 的设置项
 func SeedSettings() []domain.SettingItem {
 	return []domain.SettingItem{
-		{Key: "notifications", Title: "消息通知", Icon: "Bell", IconColor: "text-yellow-500"},
-		{Key: "favorites", Title: "收藏", Icon: "Star", IconColor: "text-blue-500"},
-		{Key: "files", Title: "文件", Icon: "FileText", IconColor: "text-emerald-500"},
-		{Key: "security", Title: "账户安全", Icon: "ShieldCheck", IconColor: "text-green-500"},
-		{Key: "settings", Title: "设置", Icon: "Settings", IconColor: "text-blue-500"},
+		{Key: "account", Title: "账号与安全", Icon: "Shield", IconColor: "text-blue-500"},
+		{Key: "privacy", Title: "隐私", Icon: "Lock", IconColor: "text-green-500"},
+		{Key: "notifications", Title: "新消息通知", Icon: "Bell", IconColor: "text-red-500"},
+		{Key: "chat", Title: "聊天", Icon: "MessageSquare", IconColor: "text-orange-500"},
+		{Key: "storage", Title: "通用", Icon: "Settings", IconColor: "text-gray-500"},
+		{Key: "themes", Title: "主题", Icon: "Palette", IconColor: "text-purple-500"},
+		{Key: "about", Title: "关于 SWT", Icon: "Info", IconColor: "text-cyan-500"},
+		{Key: "logout", Title: "退出登录", Icon: "LogOut", IconColor: "text-red-500"},
 	}
 }
