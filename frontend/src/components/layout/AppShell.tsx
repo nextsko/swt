@@ -49,9 +49,10 @@ export function AppShell() {
                     <Outlet />
                 ) : (
                     <div className="h-full flex items-center justify-center text-[var(--text-tertiary)]">
-                        <div className="text-center">
-                            <div className="text-[48px] mb-2">💬</div>
-                            <div className="text-sm">选择一个对话开始聊天</div>
+                        <div className="text-center p-8 rounded-3xl glass-panel">
+                            <div className="text-[56px] mb-3 opacity-80">💬</div>
+                            <div className="text-[15px] font-medium">选择一个对话开始聊天</div>
+                            <div className="text-[13px] mt-1 opacity-60">从左侧列表选择联系人或会话</div>
                         </div>
                     </div>
                 )}

@@ -114,7 +114,7 @@ export function GlobalSearchPage() {
                     >
                         <ArrowLeft className="w-6 h-6" />
                     </button>
-                    <div className="flex-1 h-9 bg-white/15 rounded-lg flex items-center px-2 gap-2">
+                    <div className="flex-1 h-9 bg-white/15 rounded-xl flex items-center px-2 gap-2 backdrop-blur-md">
                         <Search className="w-4 h-4 text-white/80" />
                         <input
                             autoFocus
@@ -134,7 +134,7 @@ export function GlobalSearchPage() {
             contentClassName="bg-[var(--bg-primary)]"
         >
             {/* 过滤 chip */}
-            <div className="flex gap-2 px-4 py-2 overflow-x-auto border-b border-[var(--border)] bg-[var(--bg-secondary)]">
+            <div className="flex gap-2 px-4 py-2 overflow-x-auto border-b border-[var(--border)] glass-panel">
                 {(
                     [
                         { k: 'all', label: '全部' },
@@ -149,7 +149,7 @@ export function GlobalSearchPage() {
                         className={cn(
                             'px-3 h-7 rounded-full text-[12px] flex-none',
                             kind === tab.k
-                                ? 'bg-[var(--accent)] text-white'
+                                ? 'bg-[var(--accent)] text-white shadow-sm'
                                 : 'bg-[var(--bg-input)] text-[var(--text-secondary)]',
                         )}
                         onClick={() => setKind(tab.k)}
@@ -243,7 +243,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     return (
         <div className="mb-3">
             <div className="px-4 pt-3 pb-1 text-[12px] text-[var(--text-tertiary)]">{title}</div>
-            <div className="bg-[var(--bg-secondary)]">{children}</div>
+            <div className="glass-panel rounded-2xl overflow-hidden ring-1 ring-black/5">{children}</div>
         </div>
     )
 }
@@ -292,7 +292,7 @@ function Row({
                             {name}
                         </span>
                         {tag && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 flex-none">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] font-medium flex-none">
                                 {tag}
                             </span>
                         )}

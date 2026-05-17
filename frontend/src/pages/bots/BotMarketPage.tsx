@@ -85,7 +85,7 @@ export function BotMarketPage() {
                                     <span className="text-[16px] font-semibold text-[var(--text-primary)]">
                                         {bot.name}
                                     </span>
-                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] font-semibold">
                                         MiniMax 派生
                                     </span>
                                 </div>

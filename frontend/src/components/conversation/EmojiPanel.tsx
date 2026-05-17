@@ -106,7 +106,7 @@ export function EmojiPanel({
     const current = groups.find((g) => g.key === active) ?? groups[0]
 
     return (
-        <div className="bg-[var(--bg-tertiary)] border-t border-[var(--border)] flex flex-col">
+        <div className="bg-[var(--composer-bg)] border-t border-[var(--border)] flex flex-col">
             {/* 顶部分组 chip */}
             <div className="flex gap-2 px-3 pt-2 overflow-x-auto">
                 {groups.map((g) => (
@@ -116,7 +116,7 @@ export function EmojiPanel({
                         className={cn(
                             'px-3 h-7 flex-none rounded-full text-[12px]',
                             active === g.key
-                                ? 'bg-[var(--accent)] text-white'
+                                ? 'bg-[var(--accent)] text-white shadow-sm'
                                 : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-[var(--border)]',
                         )}
                     >
@@ -130,7 +130,7 @@ export function EmojiPanel({
                 {current.items.map((e, i) => (
                     <button
                         key={g(e, i)}
-                        className="aspect-square flex items-center justify-center text-[22px] rounded-md active:bg-[var(--border)]"
+                        className="aspect-square flex items-center justify-center text-[22px] rounded-lg active:bg-[var(--border)] hover:bg-[var(--bg-secondary)] transition-colors duration-150"
                         onClick={() => onPick(e)}
                     >
                         {e}
@@ -142,7 +142,7 @@ export function EmojiPanel({
             {onBackspace && (
                 <div className="flex justify-end px-3 pb-2">
                     <button
-                        className="px-3 h-8 rounded-full bg-[var(--bg-secondary)] border border-[var(--border)] flex items-center gap-1 text-[var(--text-secondary)] text-[12px]"
+                        className="px-3 h-8 rounded-full bg-[var(--bg-secondary)] border border-[var(--border)] flex items-center gap-1 text-[var(--text-secondary)] text-[12px] active:bg-[var(--border)] transition-colors duration-150"
                         onClick={onBackspace}
                     >
                         <Delete className="w-4 h-4" />

@@ -62,7 +62,11 @@ export function ConversationListPage() {
                         加载失败：{error.message}
                     </div>
                 ) : conversations.length === 0 ? (
-                    <div className="p-10 text-center text-[var(--text-tertiary)] text-sm">暂无消息</div>
+                    <div className="h-full flex flex-col items-center justify-center text-[var(--text-tertiary)]">
+                        <div className="text-[48px] mb-3 opacity-50">💬</div>
+                        <div className="text-[15px] font-medium">暂无消息</div>
+                        <div className="text-[13px] mt-1 opacity-60">点击右上角 + 开始聊天</div>
+                    </div>
                 ) : (
                     <div>
                         {conversations.map((c) => (

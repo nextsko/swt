@@ -222,7 +222,7 @@ export function ChatComposer({
     return (
         <div
             className="flex-none bg-[var(--composer-bg)] border-t border-[var(--composer-border)]"
-            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px))' }}
+            style={{ backdropFilter: 'blur(22px) saturate(1.4)', WebkitBackdropFilter: 'blur(22px) saturate(1.4)', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px))' }}
         >
             <div className="flex items-end gap-2 px-3 py-2">
                 <button
@@ -239,7 +239,7 @@ export function ChatComposer({
 
                 {mode === 'voice' ? (
                     <button
-                        className="flex-1 h-9 rounded-md border border-[var(--border)] bg-[var(--bg-tertiary)] text-[14px] text-[var(--text-secondary)] active:bg-[var(--bg-input)] select-none"
+                        className="flex-1 h-9 rounded-xl border border-[var(--border)] bg-[var(--bg-tertiary)] text-[14px] text-[var(--text-secondary)] active:bg-[var(--bg-input)] select-none shadow-sm"
                         onMouseDown={onVoicePressStart}
                         onMouseUp={onVoicePressEnd}
                         onMouseLeave={onVoicePressEnd}
@@ -256,7 +256,7 @@ export function ChatComposer({
                         onKeyDown={onKeyDown}
                         placeholder="输入消息…"
                         rows={1}
-                        className="flex-1 min-w-0 resize-none leading-[22px] max-h-[110px] px-3 py-1.5 bg-[var(--composer-input-bg)] rounded-2xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/30"
+                        className="flex-1 min-w-0 resize-none leading-[22px] max-h-[110px] px-3.5 py-2 bg-[var(--composer-input-bg)] rounded-2xl text-[15px] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/25 shadow-sm"
                     />
                 )}
 

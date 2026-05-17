@@ -19,7 +19,7 @@ export function TypingIndicator({
             ) : (
                 <div className="w-9 h-9 shrink-0" />
             )}
-            <div className="bg-[var(--bubble-other)] text-[var(--bubble-other-text)] rounded-2xl rounded-tl-sm shadow-sm px-3 py-3 flex items-center gap-1">
+            <div className="bg-[var(--bubble-other)] text-[var(--bubble-other-text)] rounded-2xl rounded-tl-sm shadow-md px-3 py-3 flex items-center gap-1">
                 <Dot delay={0} />
                 <Dot delay={150} />
                 <Dot delay={300} />
@@ -32,7 +32,7 @@ function Dot({ delay }: { delay: number }) {
     return (
         <span
             className={cn(
-                'w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)] inline-block',
+                'w-1.5 h-1.5 rounded-full bg-[var(--accent)] inline-block',
                 'animate-typing',
             )}
             style={{ animationDelay: `${delay}ms` }}

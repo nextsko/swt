@@ -14,10 +14,10 @@ import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
 import { useBots } from '../../hooks/useBots'
 import { useContacts } from '../../hooks/useContacts'
-import { useChat, useConversations } from '../../hooks/useConversations'
+import { useChat } from '../../hooks/useConversations'
 import { formatMessageGroupTime } from '../../lib/time'
 import { chatService } from '../../services'
-import type { Message } from '../../types'
+import type { Conversation, Message } from '../../types'
 
 // 仅当"最近一条他人消息尚未产生任何文字"时显示打字指示
 // 即：streaming 状态 + 最后一条非自己消息的 text 为空
@@ -221,18 +221,20 @@ export function ChatDetailPage() {
             footer={
                 <>
                     {quote && (
-                        <div className="bg-[var(--bg-tertiary)] border-t border-[var(--border)] px-4 py-2 flex items-start gap-2">
-                            <div className="w-1 rounded bg-[var(--accent)] self-stretch" />
+                        <div className="glass-panel border-t border-[var(--border)] px-4 py-2 flex items-start gap-2"
+                            style={{ backdropFilter: 'blur(16px) saturate(1.2)', WebkitBackdropFilter: 'blur(16px) saturate(1.2)' }}
+                        >
+                            <div className="w-1 rounded-full bg-[var(--accent)] self-stretch" />
                             <div className="flex-1 min-w-0">
                                 <div className="text-[11px] text-[var(--text-secondary)]">
                                     引用 {quote.senderName}
                                 </div>
-                                <div className="text-[12px] text-[var(--text-tertiary)] truncate">
+                                <div className="text-[12px] text-[var(--text-secondary)] truncate">
                                     {quote.text}
                                 </div>
                             </div>
                             <button
-                                className="text-[var(--text-tertiary)] text-[18px] px-1"
+                                className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-[18px] px-1 transition-colors"
                                 onClick={() => setQuote(null)}
                             >
                                 ×
@@ -291,14 +293,15 @@ export function ChatDetailPage() {
                     onClick={() => setForwardMsg(null)}
                 >
                     <div
-                        className="bg-[#1C1C1E] rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[60vh] overflow-y-auto p-4"
+                        className="glass-panel rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[60vh] overflow-y-auto p-4 ring-1 ring-black/5"
                         onClick={(e) => e.stopPropagation()}
+                        style={{ backdropFilter: 'blur(28px) saturate(1.4)', WebkitBackdropFilter: 'blur(28px) saturate(1.4)' }}
                     >
-                        <h3 className="text-white text-lg font-semibold mb-3 text-center">选择会话</h3>
+                        <h3 className="text-[var(--text-primary)] text-lg font-semibold mb-3 text-center">选择会话</h3>
                         {allConvs.map((conv) => (
                             <button
                                 key={conv.id}
-                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl active:bg-white/10"
+                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl active:bg-[var(--accent)]/10 transition-colors duration-150"
                                 onClick={async () => {
                                     if (!forwardMsg || !id) return
                                     const text = forwardMsg.text
@@ -308,14 +311,14 @@ export function ChatDetailPage() {
                                     setForwardMsg(null)
                                 }}
                             >
-                                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white text-sm font-medium">
+                                <div className="w-10 h-10 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--text-primary)] text-sm font-medium shadow-sm ring-1 ring-black/5">
                                     {conv.title.charAt(0)}
                                 </div>
-                                <span className="text-white text-sm">{conv.title}</span>
+                                <span className="text-[var(--text-primary)] text-sm font-medium">{conv.title}</span>
                             </button>
                         ))}
                         <button
-                            className="w-full mt-2 py-2.5 text-center text-[#FF453A] text-sm active:bg-white/5 rounded-xl"
+                            className="w-full mt-2 py-2.5 text-center text-[var(--danger)] text-sm active:bg-[var(--danger)]/5 rounded-xl transition-colors duration-150"
                             onClick={() => setForwardMsg(null)}
                         >
                             取消

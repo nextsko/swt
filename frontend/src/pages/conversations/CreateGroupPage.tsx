@@ -88,12 +88,12 @@ export function CreateGroupPage() {
             }
             contentClassName="pb-28"
         >
-            <div className="px-4 py-3 bg-[var(--bg-secondary)] border-b border-[var(--border)]">
+            <div className="px-4 py-3 glass-panel border-b border-[var(--border)]">
                 <input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="群聊名称（可选）"
-                    className="w-full h-9 bg-[var(--bg-input)] rounded-lg px-3 text-[14px] focus:outline-none"
+                    className="w-full h-9 bg-[var(--bg-input)] rounded-xl px-3 text-[14px] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/25 transition-shadow"
                 />
             </div>
 
@@ -130,8 +130,8 @@ export function CreateGroupPage() {
 
             {pickedList.length > 0 && (
                 <div
-                    className="fixed bottom-0 left-0 right-0 bg-[var(--bg-secondary)] border-t border-[var(--border)] px-3 py-2 flex items-center gap-2 overflow-x-auto"
-                    style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 8px)' }}
+                    className="fixed bottom-0 left-0 right-0 glass-panel border-t border-[var(--border)] px-3 py-2 flex items-center gap-2 overflow-x-auto"
+                    style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 8px)', backdropFilter: 'blur(22px) saturate(1.4)', WebkitBackdropFilter: 'blur(22px) saturate(1.4)' }}
                 >
                     {pickedList.map((m) => (
                         <div
@@ -158,7 +158,7 @@ function SelectGroup({ title, children }: { title: string; children: React.React
     return (
         <div>
             <div className="px-4 pt-4 pb-1 text-[12px] text-[var(--text-tertiary)]">{title}</div>
-            <div className="bg-[var(--bg-secondary)]">{children}</div>
+            <div className="glass-panel rounded-2xl overflow-hidden ring-1 ring-black/5">{children}</div>
         </div>
     )
 }
@@ -194,7 +194,7 @@ function SelectRow({
             <Avatar src={avatar} name={name} size={36} />
             <span className="flex-1 text-left text-[15px] truncate">{name}</span>
             {tag && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 flex-none">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] font-medium flex-none">
                     {tag}
                 </span>
             )}

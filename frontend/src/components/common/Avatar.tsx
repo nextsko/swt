@@ -31,7 +31,7 @@ export function Avatar({
       <div
         className={cn(
           radius,
-          'bg-slate-300 text-slate-700 flex items-center justify-center font-medium',
+          'flex items-center justify-center font-medium shadow-sm bg-[var(--accent-soft)] text-[var(--accent)]',
           className,
         )}
         style={{ width: size, height: size, fontSize: size * 0.45 }}
@@ -45,7 +45,7 @@ export function Avatar({
     <img
       src={src}
       alt={name || 'avatar'}
-      className={cn(radius, 'object-cover bg-slate-200 flex-none', className)}
+      className={cn(radius, 'object-cover flex-none shadow-sm ring-1 ring-black/5', className)}
       style={{ width: size, height: size }}
       draggable={false}
     />
@@ -70,7 +70,7 @@ export function GroupAvatar({
 
   return (
     <div
-      className={cn('grid grid-cols-2 gap-[1px] bg-slate-200 rounded-lg overflow-hidden flex-none', className)}
+      className={cn('grid grid-cols-2 gap-[1px] bg-[var(--border)] rounded-lg overflow-hidden flex-none shadow-sm ring-1 ring-black/5', className)}
       style={{ width: size, height: size }}
     >
       {list.map((url, i) =>
@@ -79,14 +79,14 @@ export function GroupAvatar({
             key={i}
             src={url}
             alt="member"
-            className="object-cover bg-slate-100"
+            className="object-cover bg-[var(--bg-tertiary)]"
             style={{ width: cellSize, height: cellSize }}
             draggable={false}
           />
         ) : (
           <div
             key={i}
-            className="bg-slate-100"
+            className="bg-[var(--bg-tertiary)]"
             style={{ width: cellSize, height: cellSize }}
           />
         ),

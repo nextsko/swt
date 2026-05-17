@@ -145,7 +145,7 @@ export function BotDetailPage() {
         >
             {/* Bot Profile Card */}
             <div className="px-4 pt-4">
-                <div className="bg-[var(--bg-secondary)] rounded-2xl shadow-sm p-5 flex items-center gap-4">
+                <div className="glass-panel rounded-2xl shadow-md p-5 flex items-center gap-4 ring-1 ring-black/5">
                     <div
                         className={cn(
                             'w-16 h-16 rounded-2xl flex items-center justify-center flex-none overflow-hidden',
@@ -180,14 +180,14 @@ export function BotDetailPage() {
 
             {/* Tool Configuration */}
             <div className="px-4 mt-5">
-                <div className="bg-[var(--bg-secondary)] rounded-2xl shadow-sm overflow-hidden">
+                <div className="glass-panel rounded-2xl shadow-md overflow-hidden ring-1 ring-black/5">
                     <div className="px-4 py-3 border-b border-[var(--border)] flex items-center gap-2">
                         <Wrench className="w-4 h-4 text-[var(--accent)]" />
                         <span className="text-[15px] font-semibold text-[var(--text-primary)]">
                             工具配置
                         </span>
                         {allActive && (
-                            <span className="text-[11px] px-1.5 py-0.5 rounded bg-[var(--bg-input)] text-[var(--text-tertiary)]">
+                            <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] font-medium">
                                 全部启用
                             </span>
                         )}
@@ -238,7 +238,7 @@ export function BotDetailPage() {
 
             {/* Bot params */}
             <div className="px-4 mt-5">
-                <div className="bg-[var(--bg-secondary)] rounded-2xl shadow-sm overflow-hidden">
+                <div className="glass-panel rounded-2xl shadow-md overflow-hidden ring-1 ring-black/5">
                     <div className="px-4 py-3 border-b border-[var(--border)]">
                         <span className="text-[15px] font-semibold text-[var(--text-primary)]">
                             生成参数

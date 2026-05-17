@@ -65,7 +65,7 @@ function IconSending({ onSelfBubble }: { onSelfBubble?: boolean }) {
         <Loader2
             className={cn(
                 'w-3 h-3 animate-spin',
-                onSelfBubble ? 'text-white/80' : 'text-[#8E8E93]',
+                onSelfBubble ? 'text-white/80' : 'text-[var(--text-tertiary)]',
             )}
             strokeWidth={2.5}
         />
@@ -77,7 +77,7 @@ function IconSingleCheck({ onSelfBubble }: { onSelfBubble?: boolean }) {
         <Check
             className={cn(
                 'w-3.5 h-3.5',
-                onSelfBubble ? 'text-white/80' : 'text-[#8E8E93]',
+                onSelfBubble ? 'text-white/80' : 'text-[var(--text-tertiary)]',
             )}
             strokeWidth={3}
         />

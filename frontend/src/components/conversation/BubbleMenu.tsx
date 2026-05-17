@@ -85,7 +85,7 @@ export function BubbleMenu({
         >
             <div
                 ref={menuRef}
-                className="absolute min-w-[160px] py-1 bg-[#1C1C1E] rounded-xl shadow-2xl"
+                className="absolute min-w-[160px] py-1 glass-panel rounded-2xl shadow-2xl"
                 style={
                     pos
                         ? { top: pos.top, left: pos.left }
@@ -97,9 +97,9 @@ export function BubbleMenu({
                     <button
                         key={it.key}
                         className={cn(
-                            'w-full flex items-center gap-3 px-4 py-2.5 text-[14px] active:bg-white/10',
-                            it.danger ? 'text-[#FF453A]' : 'text-white',
-                            idx > 0 && 'border-t border-white/10',
+                            'w-full flex items-center gap-3 px-4 py-2.5 text-[14px] active:bg-[var(--accent)]/10 transition-colors duration-150',
+                            it.danger ? 'text-[var(--danger)]' : 'text-[var(--text-primary)]',
+                            idx > 0 && 'border-t border-[var(--border)]',
                         )}
                         onClick={() => {
                             onAction(it.key)

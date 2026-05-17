@@ -24,6 +24,8 @@ export function TabBar() {
         <nav
             className="flex items-stretch flex-none bg-[var(--tabbar-bg)] border-t border-[var(--tabbar-border)] pt-1.5"
             style={{
+                backdropFilter: 'blur(22px) saturate(1.4)',
+                WebkitBackdropFilter: 'blur(22px) saturate(1.4)',
                 paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6px)',
                 height: 'calc(env(safe-area-inset-bottom, 0px) + 56px)',
             }}

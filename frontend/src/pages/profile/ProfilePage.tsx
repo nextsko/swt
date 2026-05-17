@@ -54,13 +54,13 @@ export function ProfilePage() {
             ) : (
                 <>
                     {user && (
-                        <div className="flex items-center gap-3 px-4 py-4 bg-[var(--bg-secondary)]">
+                        <div className="flex items-center gap-3 px-4 py-5 bg-[var(--bg-secondary)] active:bg-[var(--bg-input)] cursor-pointer transition-colors duration-150">
                             <Avatar src={user.avatarUrl} name={user.name} size={56} />
                             <div className="flex-1 min-w-0">
                                 <div className="text-[18px] text-[var(--text-primary)] font-semibold leading-tight">
                                     {user.name}
                                 </div>
-                                <div className="text-[12px] text-[var(--text-tertiary)] mt-1.5 truncate">
+                                <div className="text-[13px] text-[var(--text-secondary)] mt-1.5 truncate">
                                     野火号: {user.wildFireId}
                                 </div>
                             </div>

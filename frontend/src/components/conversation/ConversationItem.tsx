@@ -41,7 +41,7 @@ export function ConversationItem({
 
     return (
         <div
-            className="flex items-center gap-3 pl-4 bg-[var(--bg-secondary)] active:bg-[var(--bg-input)] cursor-pointer"
+            className="flex items-center gap-3 pl-4 bg-[var(--bg-secondary)] active:bg-[var(--bg-input)] cursor-pointer transition-colors duration-150"
             onClick={() => {
                 if (suppressClickRef.current) return
                 navigate(`/chat/${conversation.id}`)
@@ -63,7 +63,7 @@ export function ConversationItem({
                             {conversation.title}
                         </span>
                         {conversation.type === 'bot' && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 flex-none">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] flex-none font-semibold">
                                 AI
                             </span>
                         )}

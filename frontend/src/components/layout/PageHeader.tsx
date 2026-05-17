@@ -24,10 +24,11 @@ export function PageHeader({
     return (
         <header
             className={cn(
-                'flex items-center justify-between px-5 pb-3 bg-[var(--header-bg)] text-[var(--header-text)] shadow-sm',
+                'flex items-center justify-between px-5 pb-3 text-[var(--header-text)] shadow-sm',
                 className,
             )}
             style={{
+                background: 'var(--header-bg)',
                 paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)',
             }}
         >

@@ -45,7 +45,7 @@ function BotRow({ bot, onOpen }: { bot: Bot; onOpen: (bot: Bot) => void }) {
                     <span className="text-[16px] text-[var(--text-primary)] font-medium truncate">
                         {bot.name}
                     </span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 flex-none">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] flex-none font-semibold">
                         机器人
                     </span>
                 </div>
@@ -60,7 +60,7 @@ function BotRow({ bot, onOpen }: { bot: Bot; onOpen: (bot: Bot) => void }) {
 function BotMarketRow({ onClick }: { onClick: () => void }) {
     return (
         <div
-            className="flex items-center gap-3 pl-4 bg-white active:bg-[#F2F2F7] cursor-pointer"
+            className="flex items-center gap-3 pl-4 bg-[var(--bg-secondary)] active:bg-[var(--bg-input)] cursor-pointer transition-colors duration-150"
             onClick={onClick}
         >
             <IconTile icon={BotIcon} iconColor="text-white" bgColor="bg-blue-500" size={22} />

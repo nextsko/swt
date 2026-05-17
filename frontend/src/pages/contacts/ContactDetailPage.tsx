@@ -97,7 +97,7 @@ export function ContactDetailPage() {
         >
             {/* Profile Card */}
             <div className="px-4 pt-4">
-                <div className="bg-[var(--bg-secondary)] rounded-2xl shadow-sm p-5 flex items-center gap-4">
+                <div className="glass-panel rounded-2xl shadow-md p-5 flex items-center gap-4 ring-1 ring-black/5">
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center flex-none overflow-hidden">
                         <Avatar src={contact.avatarUrl} name={contact.name} size={64} />
                     </div>
@@ -106,7 +106,7 @@ export function ContactDetailPage() {
                             {contact.name}
                         </div>
                         {contact.wildFireId && (
-                            <div className="text-[13px] text-[var(--text-tertiary)] mt-1">
+                            <div className="text-[13px] text-[var(--text-secondary)] mt-1">
                                 WildFire ID: {contact.wildFireId}
                             </div>
                         )}
@@ -126,17 +126,17 @@ export function ContactDetailPage() {
                     <MessageSquare className="w-4 h-4" />
                     {conversation ? '发消息' : '暂无会话'}
                 </button>
-                <button className="w-10 h-10 rounded-xl bg-[var(--bg-secondary)] text-[var(--text-secondary)] flex items-center justify-center active:opacity-80">
+                <button className="w-10 h-10 rounded-xl glass-panel text-[var(--text-secondary)] flex items-center justify-center active:opacity-80 shadow-sm ring-1 ring-black/5">
                     <Phone className="w-5 h-5" />
                 </button>
-                <button className="w-10 h-10 rounded-xl bg-[var(--bg-secondary)] text-[var(--text-secondary)] flex items-center justify-center active:opacity-80">
+                <button className="w-10 h-10 rounded-xl glass-panel text-[var(--text-secondary)] flex items-center justify-center active:opacity-80 shadow-sm ring-1 ring-black/5">
                     <Video className="w-5 h-5" />
                 </button>
             </div>
 
             {/* Info section */}
             <div className="px-4 mt-5">
-                <div className="bg-[var(--bg-secondary)] rounded-2xl shadow-sm overflow-hidden">
+                <div className="glass-panel rounded-2xl shadow-md overflow-hidden ring-1 ring-black/5">
                     <div className="px-4 py-3 border-b border-[var(--border)]">
                         <span className="text-[15px] font-semibold text-[var(--text-primary)]">
                             基本信息

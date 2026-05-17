@@ -40,9 +40,9 @@ export function ChatBubble({
     }
 
     const isSelf = message.isSelf
-    const bubbleBase = 'w-fit max-w-full rounded-2xl px-3 py-2 leading-relaxed text-[15px] select-text'
+    const bubbleBase = 'w-fit max-w-full rounded-2xl px-3.5 py-2.5 leading-relaxed text-[15px] select-text'
     const bubbleSide = isSelf
-        ? 'bg-[var(--bubble-self)] text-[var(--bubble-self-text)] rounded-tr-sm'
+        ? 'text-[var(--bubble-self-text)] rounded-tr-sm'
         : 'bg-[var(--bubble-other)] text-[var(--bubble-other-text)] rounded-tl-sm shadow-sm'
 
     return (
@@ -57,7 +57,7 @@ export function ChatBubble({
                     </div>
                 )}
                 <div {...longPressBinders} className="select-none touch-manipulation">
-                    {renderContent(message, bubbleBase, bubbleSide)}
+                    {renderContent(message, bubbleBase, bubbleSide, isSelf)}
                 </div>
                 {isSelf && (
                     <div className="flex items-center gap-1 px-1">
@@ -76,11 +76,11 @@ export function ChatBubble({
     )
 }
 
-function renderContent(message: Message, base: string, side: string) {
+function renderContent(message: Message, base: string, side: string, isSelf: boolean) {
     switch (message.type) {
         case 'text':
             return (
-                <div className={cn(base, side)}>
+                <div className={cn(base, side)} style={isSelf ? { background: 'var(--bubble-self)' } : undefined}>
                     <MarkdownText text={message.text ?? ''} isSelf={message.isSelf} />
                 </div>
             )
@@ -159,7 +159,7 @@ function renderContent(message: Message, base: string, side: string) {
                 <div
                     className={cn(
                         'w-fit rounded-2xl px-4 py-3 text-white flex items-center gap-3 min-w-[180px]',
-                        'bg-gradient-to-br from-[#FF6B35] to-[#FF3B30] shadow',
+                        'bg-gradient-to-br from-[#FF6B35] to-[#FF3B30] shadow-lg',
                     )}
                 >
                     <Wallet className="w-8 h-8" strokeWidth={1.8} />

@@ -28,11 +28,11 @@ export function DiscoverPage() {
             {loading ? (
                 <div className="p-6 text-center text-[var(--text-tertiary)] text-sm">加载中…</div>
             ) : (
-                <div className="bg-[var(--bg-secondary)]">
+                <div className="mx-3 mt-3 rounded-2xl overflow-hidden glass-panel">
                     {features.map((f) => (
                         <div
                             key={f.key}
-                            className="flex items-center gap-3 pl-4 active:bg-[var(--bg-input)] cursor-pointer"
+                            className="flex items-center gap-3 pl-4 active:bg-[var(--bg-input)] cursor-pointer transition-colors duration-150"
                             onClick={() => handleClick(f)}
                         >
                             <IconTile icon={f.icon} iconColor={f.iconColor} size={22} />

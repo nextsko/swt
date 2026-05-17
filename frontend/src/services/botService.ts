@@ -1,5 +1,4 @@
 import * as BotBinding from '../../bindings/changeme/backend/services/botservice.js'
-import { getBotConversationId } from '../lib/botConversation'
 import type { Bot, Conversation } from '../types'
 import { shouldUseMock } from './mockFallback'
 

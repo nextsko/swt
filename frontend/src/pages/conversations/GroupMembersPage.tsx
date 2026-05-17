@@ -165,12 +165,12 @@ export function GroupMembersPage() {
                         <div className="relative">
                             <Avatar src={m.avatar} name={m.name} size={52} />
                             {m.isOwner && (
-                                <span className="absolute -top-1 -right-1 bg-[#FFCC00] text-[9px] text-[var(--text-secondary)] px-1 rounded-sm font-semibold">
+                                <span className="absolute -top-1 -right-1 bg-[#FFCC00] text-[9px] text-[var(--text-secondary)] px-1 rounded-md font-semibold shadow-sm">
                                     群主
                                 </span>
                             )}
                             {m.isBot && (
-                                <span className="absolute -bottom-1 -right-1 bg-[var(--accent)] text-white text-[9px] px-1 rounded-sm font-medium">
+                                <span className="absolute -bottom-1 -right-1 bg-[var(--accent)] text-white text-[9px] px-1 rounded-md font-medium shadow-sm">
                                     AI
                                 </span>
                             )}
@@ -195,7 +195,7 @@ export function GroupMembersPage() {
                         className="flex flex-col items-center gap-1.5"
                         onClick={handleAddMember}
                     >
-                        <div className="w-[52px] h-[52px] rounded-full border-2 border-dashed border-[var(--text-quaternary)] flex items-center justify-center">
+                        <div className="w-[52px] h-[52px] rounded-full border-2 border-dashed border-[var(--text-quaternary)] flex items-center justify-center hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] transition-colors duration-150">
                             <Plus className="w-6 h-6 text-[var(--text-tertiary)]" />
                         </div>
                         <span className="text-[12px] text-[var(--text-tertiary)]">添加</span>

@@ -46,17 +46,17 @@ export function PopMenu({
         <div
             ref={ref}
             className={cn(
-                'absolute z-40 min-w-[160px] py-1.5 rounded-xl bg-[#1C1C1E] shadow-xl',
+                'absolute z-40 min-w-[160px] py-1.5 rounded-2xl glass-panel shadow-xl',
                 anchor === 'top-right' ? 'right-3' : 'left-3',
             )}
-            style={{ top: 'calc(env(safe-area-inset-top, 0px) + 48px)' }}
+            style={{ top: 'calc(env(safe-area-inset-top, 0px) + 48px)', backdropFilter: 'blur(24px) saturate(1.4)', WebkitBackdropFilter: 'blur(24px) saturate(1.4)' }}
         >
             {items.map((it, idx) => (
                 <button
                     key={it.key}
                     className={cn(
-                        'w-full flex items-center gap-3 px-4 py-2.5 text-[14px] text-white active:bg-white/10',
-                        idx > 0 && 'border-t border-white/10',
+                        'w-full flex items-center gap-3 px-4 py-2.5 text-[14px] text-[var(--text-primary)] active:bg-[var(--accent)]/10 transition-colors duration-150',
+                        idx > 0 && 'border-t border-[var(--border)]',
                     )}
                     onClick={() => {
                         onClose()

@@ -2,8 +2,8 @@ export interface Contact {
   id: string
   name: string
   avatarUrl: string
-  wildFireId: string
-  isSpecial: boolean
+  wildFireId?: string
+  isSpecial?: boolean
   specialKey?: string
 }
 
