@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=swt
+Exec=swt
+Icon=swt
+Categories=Development;
+Terminal=false
+Keywords=wails
+Version=1.0
+StartupNotify=false
