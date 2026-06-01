@@ -1,0 +1,142 @@
+name: Mobile Build (On-Demand)
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Target platform'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - android
+          - ios
+      arch:
+        description: 'Android architecture'
+        required: false
+        default: 'fat'
+        type: choice
+        options:
+          - arm64
+          - amd64
+          - fat
+
+env:
+  GO_VERSION: "1.23"
+  NODE_VERSION: "18"
+
+jobs:
+  # ==================== Android Build ====================
+  android:
+    if: inputs.platform == 'all' || inputs.platform == 'android' || github.event.inputs.platform == ''
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Android NDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/r26d" >> $GITHUB_ENV
+
+      - name: Install frontend deps
+        run: |
+          cd frontend
+          npm install
+        shell: bash
+
+      - name: Install Go dependencies
+        run: go mod download
+
+      - name: Build arm64 APK
+        if: inputs.arch == 'arm64' || inputs.arch == 'fat'
+        run: task android:build ARCH=arm64
+        dir: build/android
+        shell: bash
+
+      - name: Build amd64 APK
+        if: inputs.arch == 'amd64' || inputs.arch == 'fat'
+        run: task android:build ARCH=amd64
+        dir: build/android
+        shell: bash
+
+      - name: Package fat APK
+        if: inputs.arch == 'fat'
+        run: task android:package:fat
+        dir: build/android
+        shell: bash
+
+      - name: Package single-arch APK
+        if: inputs.arch != 'fat'
+        run: task android:assemble:apk
+        dir: build/android
+        shell: bash
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: swt-android-${{ inputs.arch || 'fat' }}
+          path: bin/swt*.apk
+
+  # ==================== iOS Build ====================
+  ios:
+    if: inputs.platform == 'all' || inputs.platform == 'ios' || github.event.inputs.platform == ''
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest
+
+      - name: Install frontend deps
+        run: |
+          cd frontend
+          npm install
+        shell: bash
+
+      - name: Install Go dependencies
+        run: go mod download
+
+      - name: Build iOS App
+        run: task ios:package
+        dir: build/ios
+        shell: bash
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: swt-ios
+          path: bin/swt.app

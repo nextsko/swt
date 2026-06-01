@@ -1,0 +1,200 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_OPTIONS: "--max-old-space-size=4096"
+  GO_VERSION: "1.23"
+  NODE_VERSION: "18"
+
+jobs:
+  # ==================== Desktop Platforms ====================
+  build-desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Windows
+          - platform: windows/amd64
+            os: windows-latest
+            build_dir: windows
+          # macOS
+          - platform: darwin/universal
+            os: macos-latest
+            build_dir: darwin
+          # Linux
+          - platform: linux/amd64
+            os: ubuntu-latest
+            build_dir: linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install frontend deps
+        run: |
+          cd frontend
+          npm install
+        shell: bash
+
+      - name: Install Go dependencies
+        run: go mod download
+
+      - name: Build - ${{ matrix.platform }}
+        run: task build
+        dir: build/${{ matrix.build_dir }}
+        shell: bash
+
+      - name: Package - ${{ matrix.platform }}
+        if: matrix.os != 'ubuntu-latest'
+        run: task package
+        dir: build/${{ matrix.build_dir }}
+        shell: bash
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: swt-${{ matrix.platform }}
+          path: bin/*
+
+  # ==================== Android ====================
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Android NDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/r26d" >> $GITHUB_ENV
+
+      - name: Install frontend deps
+        run: |
+          cd frontend
+          npm install
+        shell: bash
+
+      - name: Install Go dependencies
+        run: go mod download
+
+      - name: Build fat APK (arm64 + amd64)
+        run: task android:package:fat
+        dir: build/android
+        shell: bash
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: swt-android-fat-apk
+          path: bin/swt.apk
+
+  # ==================== iOS ====================
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest
+
+      - name: Install frontend deps
+        run: |
+          cd frontend
+          npm install
+        shell: bash
+
+      - name: Install Go dependencies
+        run: go mod download
+
+      - name: Build iOS App
+        run: task package
+        dir: build/ios
+        shell: bash
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: swt-ios
+          path: bin/swt.app
+
+  # ==================== Release ====================
+  release:
+    needs: [build-desktop, build-android, build-ios]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/**/*.apk
+            artifacts/**/*.exe
+            artifacts/**/*.msix
+            artifacts/swt-darwin-*/**/*
+            artifacts/swt-linux-*/**/*
+            artifacts/swt-ios/swt.app/**
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
