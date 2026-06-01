@@ -57,7 +57,7 @@ jobs:
       - name: Install Wails CLI
         run: |
           mkdir -p "$(go env GOPATH)/bin"
-          go install github.com/wailsapp/wails/v3/cmd/wails3@latest
+          CGO_ENABLED=0 go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha.76
 
       - name: Install Linux dependencies
         run: |
@@ -127,7 +127,7 @@ jobs:
       - name: Install Wails CLI
         run: |
           mkdir -p "$(go env GOPATH)/bin"
-          go install github.com/wailsapp/wails/v3/cmd/wails3@latest
+          CGO_ENABLED=0 go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha.76
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
