@@ -99,6 +99,10 @@ func (m *MessageProcessor) processIOSMethod(req *RuntimeRequest, window Window) 
 	}
 }
 
+// androidMethodNames is unused on iOS but must be defined for compilation
+// (the desktop stub in messageprocessor_mobile_stub.go is excluded by //go:build !ios && !android)
+var androidMethodNames = map[int]string{}
+
 // processAndroidMethod is a stub on iOS
 func (m *MessageProcessor) processAndroidMethod(req *RuntimeRequest, window Window) (any, error) {
 	return nil, errs.NewInvalidAndroidCallErrorf("Android methods not available on iOS")
