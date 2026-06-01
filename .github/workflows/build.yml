@@ -20,18 +20,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Windows
           - platform: windows/amd64
             os: windows-latest
-            build_dir: windows
-          # macOS
           - platform: darwin/universal
             os: macos-latest
-            build_dir: darwin
-          # Linux
           - platform: linux/amd64
             os: ubuntu-latest
-            build_dir: linux
 
     runs-on: ${{ matrix.os }}
 
@@ -55,21 +49,18 @@ jobs:
         run: |
           cd frontend
           npm install
-        shell: bash
 
       - name: Install Go dependencies
         run: go mod download
 
       - name: Build - ${{ matrix.platform }}
         run: task build
-        dir: build/${{ matrix.build_dir }}
-        shell: bash
+        working-directory: build/${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'darwin' || 'linux' }}
 
       - name: Package - ${{ matrix.platform }}
         if: matrix.os != 'ubuntu-latest'
         run: task package
-        dir: build/${{ matrix.build_dir }}
-        shell: bash
+        working-directory: build/${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'darwin' || 'linux' }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -109,15 +100,13 @@ jobs:
         run: |
           cd frontend
           npm install
-        shell: bash
 
       - name: Install Go dependencies
         run: go mod download
 
-      - name: Build fat APK (arm64 + amd64)
+      - name: Build fat APK
         run: task android:package:fat
-        dir: build/android
-        shell: bash
+        working-directory: build/android
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -154,15 +143,13 @@ jobs:
         run: |
           cd frontend
           npm install
-        shell: bash
 
       - name: Install Go dependencies
         run: go mod download
 
       - name: Build iOS App
         run: task package
-        dir: build/ios
-        shell: bash
+        working-directory: build/ios
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

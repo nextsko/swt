@@ -60,7 +60,6 @@ jobs:
         run: |
           cd frontend
           npm install
-        shell: bash
 
       - name: Install Go dependencies
         run: go mod download
@@ -68,26 +67,22 @@ jobs:
       - name: Build arm64 APK
         if: inputs.arch == 'arm64' || inputs.arch == 'fat'
         run: task android:build ARCH=arm64
-        dir: build/android
-        shell: bash
+        working-directory: build/android
 
       - name: Build amd64 APK
         if: inputs.arch == 'amd64' || inputs.arch == 'fat'
         run: task android:build ARCH=amd64
-        dir: build/android
-        shell: bash
+        working-directory: build/android
 
       - name: Package fat APK
         if: inputs.arch == 'fat'
         run: task android:package:fat
-        dir: build/android
-        shell: bash
+        working-directory: build/android
 
       - name: Package single-arch APK
         if: inputs.arch != 'fat'
         run: task android:assemble:apk
-        dir: build/android
-        shell: bash
+        working-directory: build/android
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -125,15 +120,13 @@ jobs:
         run: |
           cd frontend
           npm install
-        shell: bash
 
       - name: Install Go dependencies
         run: go mod download
 
       - name: Build iOS App
-        run: task ios:package
-        dir: build/ios
-        shell: bash
+        run: task package
+        working-directory: build/ios
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
