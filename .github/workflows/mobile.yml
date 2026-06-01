@@ -23,7 +23,7 @@ on:
           - fat
 
 env:
-  GO_VERSION: "1.25"
+  GO_VERSION: "1.26.x"
   NODE_VERSION: "22"
 
 jobs:
