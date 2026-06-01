@@ -10,8 +10,8 @@ on:
 
 env:
   NODE_OPTIONS: "--max-old-space-size=4096"
-  GO_VERSION: "1.23"
-  NODE_VERSION: "18"
+  GO_VERSION: "1.23.5"
+  NODE_VERSION: "22"
 
 jobs:
   # ==================== Desktop Platforms ====================
