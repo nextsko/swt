@@ -52,9 +52,7 @@ jobs:
         run: npm install -g bun
 
       - name: Install Task
-        uses: arduino/setup-task@v2
-        with:
-          version: 3.x
+        run: go install github.com/go-task/task/v3/cmd/task@latest
 
       - name: Install Linux dependencies
         run: |
@@ -116,9 +114,7 @@ jobs:
         run: npm install -g bun
 
       - name: Install Task
-        uses: arduino/setup-task@v2
-        with:
-          version: 3.x
+        run: go install github.com/go-task/task/v3/cmd/task@latest
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
