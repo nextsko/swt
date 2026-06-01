@@ -51,8 +51,10 @@ jobs:
       - name: Install bun
         run: npm install -g bun
 
-      - name: Install Task
-        run: go install github.com/go-task/task/v3/cmd/task@latest
+      - name: Install Task & Wails CLI
+        run: |
+          go install github.com/go-task/task/v3/cmd/task@latest
+          go install github.com/wailsapp/wails/v3/cmd/wails3@latest
 
       - name: Install Linux dependencies
         if: matrix.os == 'ubuntu-latest'
@@ -96,8 +98,10 @@ jobs:
       - name: Install bun
         run: npm install -g bun
 
-      - name: Install Task
-        run: go install github.com/go-task/task/v3/cmd/task@latest
+      - name: Install Task & Wails CLI
+        run: |
+          go install github.com/go-task/task/v3/cmd/task@latest
+          go install github.com/wailsapp/wails/v3/cmd/wails3@latest
 
       - name: Install Linux dependencies
         run: |
@@ -144,8 +148,10 @@ jobs:
       - name: Install bun
         run: npm install -g bun
 
-      - name: Install Task
-        run: go install github.com/go-task/task/v3/cmd/task@latest
+      - name: Install Task & Wails CLI
+        run: |
+          go install github.com/go-task/task/v3/cmd/task@latest
+          go install github.com/wailsapp/wails/v3/cmd/wails3@latest
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
