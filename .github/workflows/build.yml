@@ -10,7 +10,7 @@ on:
 
 env:
   NODE_OPTIONS: "--max-old-space-size=4096"
-  GO_VERSION: "1.26.x"
+  GO_VERSION: "1.25.x"
   NODE_VERSION: "22"
 
 jobs:

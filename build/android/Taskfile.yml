@@ -95,7 +95,7 @@ tasks:
         mkdir -p {{.BIN_DIR}}
         mkdir -p build/android/app/src/main/jniLibs/$JNI_DIR
 
-        go build -buildmode=c-shared {{.BUILD_FLAGS}} \
+        go build -mod=vendor -buildmode=c-shared {{.BUILD_FLAGS}} \
           -o build/android/app/src/main/jniLibs/$JNI_DIR/libwails.so
     vars:
       BUILD_FLAGS: '{{if eq .PRODUCTION "true"}}-tags production,android -trimpath -buildvcs=false -ldflags="-w -s"{{else}}-tags android,debug -buildvcs=false -gcflags=all="-l"{{end}}'
