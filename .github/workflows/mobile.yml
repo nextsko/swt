@@ -38,10 +38,10 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Go (use 1.24.x for Android CGO compat)
+      - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.x'
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
