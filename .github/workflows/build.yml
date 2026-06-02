@@ -125,13 +125,23 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
 
-      - name: Install Android SDK
+      - name: Install Android SDK + NDK r26d
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'tools platform-tools ndk;r26d'
 
-      - name: Setup Android NDK (use pre-installed NDK 27)
+      - name: Setup Android NDK
         run: |
-          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.3.13750724" >> $GITHUB_ENV
-          ls -la "$ANDROID_HOME/ndk/" || echo "NDK dir listing failed"
+          # Prefer r26d if installed by packages above
+          if [ -d "$ANDROID_HOME/ndk/r26d" ]; then
+            echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/r26d" >> $GITHUB_ENV
+          # Fallback to pre-installed NDK 27
+          elif [ -d "$ANDROID_HOME/ndk/27.3.13750724" ]; then
+            echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.3.13750724" >> $GITHUB_ENV
+          else
+            echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/$(ls $ANDROID_HOME/ndk | head -1)" >> $GITHUB_ENV
+          fi
+          echo "Using NDK: $ANDROID_NDK_HOME"
 
       - name: Build fat APK
         run: task android:package:fat
