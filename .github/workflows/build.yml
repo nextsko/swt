@@ -128,13 +128,10 @@ jobs:
       - name: Install Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android NDK r26d
+      - name: Setup Android NDK (use pre-installed NDK 27)
         run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;r26d" || \
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "ndk;r26d" || \
-          echo "Warning: NDK r26d manual install failed, trying fallback..."
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/r26d" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.3.13750724" >> $GITHUB_ENV
+          ls -la "$ANDROID_HOME/ndk/" || echo "NDK dir listing failed"
 
       - name: Build fat APK
         run: task android:package:fat

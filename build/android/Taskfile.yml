@@ -121,6 +121,10 @@ tasks:
 
   package:fat:
     summary: Packages a production build for all architectures (fat APK)
+    deps:
+      - task: build
+        vars:
+          PRODUCTION: "true"
     cmds:
       - task: compile:go:all-archs
       - task: assemble:apk
@@ -129,7 +133,7 @@ tasks:
     summary: Assembles the APK using Gradle
     dir: .
     cmds:
-      - ./gradlew.bat assembleDebug
+      - '{{if eq OS "windows"}}./gradlew.bat{{else}}./gradlew{{end}} assembleDebug'
       - cp app/build/outputs/apk/debug/app-debug.apk ../../bin/swt.apk
 
   assemble:apk:release:
