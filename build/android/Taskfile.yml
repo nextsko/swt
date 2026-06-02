@@ -72,14 +72,14 @@ tasks:
         # Set compiler based on architecture
         case "{{.ARCH}}" in
           arm64)
-            export CC="$TOOLCHAIN/bin/clang -target aarch64-linux-android{{.MIN_SDK}}"
-            export CXX="$TOOLCHAIN/bin/clang++ -target aarch64-linux-android{{.MIN_SDK}}"
+            export CC="$TOOLCHAIN/bin/clang -target aarch64-linux-android{{.MIN_SDK}} --sysroot $TOOLCHAIN/sysroot"
+            export CXX="$TOOLCHAIN/bin/clang++ -target aarch64-linux-android{{.MIN_SDK}} --sysroot $TOOLCHAIN/sysroot"
             export GOARCH=arm64
             JNI_DIR="arm64-v8a"
             ;;
           amd64|x86_64)
-            export CC="$TOOLCHAIN/bin/clang -target x86_64-linux-android{{.MIN_SDK}}"
-            export CXX="$TOOLCHAIN/bin/clang++ -target x86_64-linux-android{{.MIN_SDK}}"
+            export CC="$TOOLCHAIN/bin/clang -target x86_64-linux-android{{.MIN_SDK}} --sysroot $TOOLCHAIN/sysroot"
+            export CXX="$TOOLCHAIN/bin/clang++ -target x86_64-linux-android{{.MIN_SDK}} --sysroot $TOOLCHAIN/sysroot"
             export GOARCH=amd64
             JNI_DIR="x86_64"
             ;;
@@ -91,8 +91,6 @@ tasks:
 
         export CGO_ENABLED=1
         export GOOS=android
-        export CGO_CFLAGS="--sysroot $NDK_ROOT/toolchains/llvm/prebuilt/$HOST_TAG/sysroot"
-        export CGO_LDFLAGS="--sysroot $NDK_ROOT/toolchains/llvm/prebuilt/$HOST_TAG/sysroot"
 
         mkdir -p {{.BIN_DIR}}
         mkdir -p build/android/app/src/main/jniLibs/$JNI_DIR
