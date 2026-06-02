@@ -146,14 +146,17 @@ jobs:
           fi
           echo "Using NDK: $ANDROID_NDK_HOME"
 
-      - name: Build fat APK
-        run: task android:package:fat
+      - name: Build Go shared library (no Gradle)
+        run: task android:compile:go:all-archs
+        timeout-minutes: 10
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: swt-android-fat-apk
-          path: bin/swt.apk
+          path: |
+            bin/swt.apk
+            build/android/app/src/main/jniLibs/**/*.so
 
   # ==================== iOS ====================
   build-ios:
