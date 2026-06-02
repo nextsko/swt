@@ -38,10 +38,10 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Go (use 1.25.x for Android CGO compat)
+      - name: Setup Go (use 1.24.x for Android CGO compat)
         uses: actions/setup-go@v5
         with:
-          go-version: '1.25.x'
+          go-version: '1.24.x'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -69,15 +69,17 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android NDK r26d
+      - name: Install Android NDK r25c (better CGO compat)
         run: |
           export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
           export JAVA_HOME=${JAVA_HOME_17_X64:-/usr/lib/jvm/java-17-openjdk-amd64}
-          # Accept licenses and install NDK r26d
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "ndk;r26d" 2>&1 || true
-          # Use r26d if installed, otherwise fallback to any available NDK
-          if [ -d "$ANDROID_SDK_ROOT/ndk/r26d" ]; then
-            echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/r26d" >> $GITHUB_ENV
+          # Install NDK r25c (older, better Go CGO compatibility)
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "ndk;r25c" 2>&1 || true
+          # Prefer r25c, then r26d, then any available
+          if [ -d "$ANDROID_SDK_ROOT/ndk/25.2.9519653" ]; then
+            echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
+          elif [ -d "$ANDROID_SDK_ROOT/ndk/r25c" ]; then
+            echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/r25c" >> $GITHUB_ENV
           elif [ -d "$ANDROID_SDK_ROOT/ndk/27.3.13750724" ]; then
             echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/27.3.13750724" >> $GITHUB_ENV
           else
