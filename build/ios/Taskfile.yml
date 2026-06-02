@@ -51,6 +51,7 @@ tasks:
       CGO_ENABLED: 1
       GOARCH: '{{.ARCH | default "arm64"}}'
       PRODUCTION: '{{.PRODUCTION | default "false"}}'
+      CC: 'clang -target arm64-apple-ios15.0-simulator -isysroot {{.SDK_PATH}}'
       CGO_CFLAGS: '-isysroot {{.SDK_PATH}} -target arm64-apple-ios15.0-simulator -mios-simulator-version-min=15.0'
       CGO_LDFLAGS: '-isysroot {{.SDK_PATH}} -target arm64-apple-ios15.0-simulator'
 
@@ -154,6 +155,7 @@ tasks:
       GOOS: ios
       CGO_ENABLED: 1
       GOARCH: '{{.ARCH | default "arm64"}}'
+      CC: 'clang -target arm64-apple-ios15.0-simulator -isysroot {{.SDK_PATH}}'
       CGO_CFLAGS: '-isysroot {{.SDK_PATH}} -target arm64-apple-ios15.0-simulator -mios-simulator-version-min=15.0'
       CGO_LDFLAGS: '-isysroot {{.SDK_PATH}} -target arm64-apple-ios15.0-simulator'
 
